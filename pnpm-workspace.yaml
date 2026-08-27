@@ -2,5 +2,10 @@ packages:
   - "."
 overrides:
   tmp: ">=0.2.6"
+  # mpegts.js depends on webworkify-webpack via a codeload.github.com
+  # tarball URL. Some sandboxed environments (this project's own dev
+  # session included) block that host while still allowing `git clone`,
+  # so it's vendored locally instead - see vendor/README.md.
+  webworkify-webpack: "file:./vendor/webworkify-webpack"
 patchedDependencies:
   "mpegts.js@1.8.0": patches/mpegts.js.patch

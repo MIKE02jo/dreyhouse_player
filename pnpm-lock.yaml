@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  tmp: '>=0.2.6'
   webworkify-webpack: file:./vendor/webworkify-webpack
 
 patchedDependencies:

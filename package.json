@@ -26,11 +26,6 @@
     "branding:sync": "node ./branding/sync-brand.mjs",
     "branding:icons": "tauri icon ./branding/logo-mark-1024.png"
   },
-  "pnpm": {
-    "overrides": {
-      "webworkify-webpack": "file:./vendor/webworkify-webpack"
-    }
-  },
   "dependencies": {
     "@astrojs/svelte": "^9.0.1",
     "@fontsource-variable/geist": "5.3.0",
