@@ -1,0 +1,14 @@
+{
+  "id": "com.dreyhouse.player",
+  "version": "1.0.0",
+  "vendor": "DREYHOUSE PLAYER",
+  "type": "web",
+  "main": "index.html",
+  "title": "DREYHOUSE PLAYER",
+  "icon": "icon.png",
+  "largeIcon": "largeIcon.png",
+  "resolution": "1920x1080",
+  "iconColor": "#00BF63",
+  "bgColor": "#0f2417",
+  "disableBackHistoryAPI": true
+}
