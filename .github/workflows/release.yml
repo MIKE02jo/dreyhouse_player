@@ -482,22 +482,28 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       # ffmpeg sidecar binaries come from the "ffmpeg Sidecar" workflow's
-      # rolling ffmpeg-sidecar-v2 prerelease, not built here.
+      # rolling ffmpeg-sidecar-v2 prerelease. This fork doesn't publish its
+      # own sidecar release (see docs/BRANDING.md, "Third-party binaries"),
+      # so pull the checksum-pinned build from upstream instead, same as
+      # local dev's ensure-ffmpeg-sidecar.mjs. Run this repo's own "ffmpeg
+      # Sidecar" workflow and update FFMPEG_SIDECAR_REPO instead once this
+      # fork hosts its own build.
       # Integrity comes from the committed pins, not the release's own sums.
       - name: Fetch ffmpeg sidecar
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FFMPEG_SIDECAR_REPO: infinitel8p/Extreme-InfiniTV
         run: |
           set -euo pipefail
           mkdir -p src-tauri/binaries
           ASSET="${{ matrix.sidecar-asset }}"
           if ! gh release download ffmpeg-sidecar-v2 \
-            --repo "${{ github.repository }}" \
+            --repo "$FFMPEG_SIDECAR_REPO" \
             --pattern "$ASSET" \
             --dir src-tauri/binaries \
             --clobber; then
-            echo "::error::Could not download $ASSET from the ffmpeg-sidecar-v2 release. Run the 'ffmpeg Sidecar' workflow first."
+            echo "::error::Could not download $ASSET from $FFMPEG_SIDECAR_REPO's ffmpeg-sidecar-v2 release."
             exit 1
           fi
           if ! EXPECTED_SHA=$(node src/scripts/ensure-ffmpeg-sidecar.mjs --print-pin "$ASSET"); then
