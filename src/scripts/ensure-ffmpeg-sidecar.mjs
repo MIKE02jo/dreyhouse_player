@@ -24,6 +24,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const repoRoot = join(__dirname, "..", "..")
 const binariesDir = join(repoRoot, "src-tauri", "binaries")
 
+// Intentionally still hosted on the upstream Extreme InfiniTV repo (a
+// checksum-pinned FFmpeg LGPL build, not upstream's own branding) - this
+// project doesn't host its own ffmpeg-sidecar release yet. See
+// docs/BRANDING.md ("Third-party binaries").
 const RELEASE_BASE_URL =
   "https://github.com/infinitel8p/Extreme-InfiniTV/releases/download/ffmpeg-sidecar-v2"
 const RELEASE_TAG = RELEASE_BASE_URL.split("/").pop()

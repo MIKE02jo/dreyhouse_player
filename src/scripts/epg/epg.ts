@@ -233,7 +233,7 @@ function renderEpgSkeletonInto(target, label) {
   }
   root.appendChild(body)
 
-  // Now-line accent - quiet fuchsia hint about a third in.
+  // Now-line accent - quiet brand-color hint about a third in.
   const now = document.createElement("div")
   now.className = "epg-sk-now"
   now.style.left = `${CHANNEL_W + HOUR_W * 1.8}px`

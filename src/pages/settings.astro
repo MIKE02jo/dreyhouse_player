@@ -11,9 +11,6 @@ import {
   IconDeviceFloppy,
   IconDownload,
   IconUpload,
-  IconHeart,
-  IconCoffee,
-  IconBrandPaypal,
   IconBug,
   IconMail,
   IconChevronDown,
@@ -93,7 +90,6 @@ const navStructure: NavSection[] = [
   { id: "settings-help", labelKey: "settings.group.help", label: "Help & feedback", cards: [
     { id: "card-docs",        labelKey: "settings.help.docsTitle",  label: "Read the docs" },
     { id: "card-feedback",    labelKey: "settings.nav.feedback",    label: "Send feedback" },
-    { id: "settings-support", labelKey: "settings.group.support",   label: "Support" },
   ]},
   { id: "settings-danger",  labelKey: "settings.group.dangerZone", label: "Danger zone", cards: [], danger: true },
 ]
@@ -325,16 +321,13 @@ const navStructure: NavSection[] = [
                     role="radiogroup"
                     data-i18n-attr="aria-label:settings.accent.label"
                     aria-label="Accent color">
-                    <button type="button" role="radio" data-accent-value="fuchsia" aria-checked="false" data-i18n-attr="title:settings.accent.fuchsia;aria-label:settings.accent.fuchsia" title="Fuchsia" aria-label="Fuchsia" class="accent-btn btn group size-11 p-0" style="--swatch: var(--accent-swatch-fuchsia)">
+                    <button type="button" role="radio" data-accent-value="emerald" aria-checked="false" data-i18n-attr="title:settings.accent.emerald;aria-label:settings.accent.emerald" title="Emerald" aria-label="Emerald" class="accent-btn btn group size-11 p-0" style="--swatch: var(--accent-swatch-emerald)">
                       <span class="size-5 rounded-full bg-(--swatch) group-aria-checked:ring-2 group-aria-checked:ring-(--swatch) group-aria-checked:ring-offset-2 group-aria-checked:ring-offset-surface" aria-hidden="true"></span>
                     </button>
                     <button type="button" role="radio" data-accent-value="rose" aria-checked="false" data-i18n-attr="title:settings.accent.rose;aria-label:settings.accent.rose" title="Rose" aria-label="Rose" class="accent-btn btn group size-11 p-0" style="--swatch: var(--accent-swatch-rose)">
                       <span class="size-5 rounded-full bg-(--swatch) group-aria-checked:ring-2 group-aria-checked:ring-(--swatch) group-aria-checked:ring-offset-2 group-aria-checked:ring-offset-surface" aria-hidden="true"></span>
                     </button>
                     <button type="button" role="radio" data-accent-value="ember" aria-checked="false" data-i18n-attr="title:settings.accent.ember;aria-label:settings.accent.ember" title="Ember" aria-label="Ember" class="accent-btn btn group size-11 p-0" style="--swatch: var(--accent-swatch-ember)">
-                      <span class="size-5 rounded-full bg-(--swatch) group-aria-checked:ring-2 group-aria-checked:ring-(--swatch) group-aria-checked:ring-offset-2 group-aria-checked:ring-offset-surface" aria-hidden="true"></span>
-                    </button>
-                    <button type="button" role="radio" data-accent-value="emerald" aria-checked="false" data-i18n-attr="title:settings.accent.emerald;aria-label:settings.accent.emerald" title="Emerald" aria-label="Emerald" class="accent-btn btn group size-11 p-0" style="--swatch: var(--accent-swatch-emerald)">
                       <span class="size-5 rounded-full bg-(--swatch) group-aria-checked:ring-2 group-aria-checked:ring-(--swatch) group-aria-checked:ring-offset-2 group-aria-checked:ring-offset-surface" aria-hidden="true"></span>
                     </button>
                     <button type="button" role="radio" data-accent-value="cyan" aria-checked="false" data-i18n-attr="title:settings.accent.cyan;aria-label:settings.accent.cyan" title="Cyan" aria-label="Cyan" class="accent-btn btn group size-11 p-0" style="--swatch: var(--accent-swatch-cyan)">
@@ -426,7 +419,7 @@ const navStructure: NavSection[] = [
                       themeBtns[j].setAttribute("aria-checked", themeBtns[j].getAttribute("data-theme") === currentTheme ? "true" : "false");
                     }
                   }
-                  var currentAccent = localStorage.getItem("xt_accent") || "fuchsia";
+                  var currentAccent = localStorage.getItem("xt_accent") || "emerald";
                   var accentGroup = document.getElementById("settings-accent");
                   if (accentGroup) {
                     var accentBtns = accentGroup.querySelectorAll(".accent-btn");
@@ -1031,7 +1024,7 @@ const navStructure: NavSection[] = [
                     <span data-i18n="settings.discord.title">Discord Rich Presence</span>
                   </h3>
                   <span data-i18n="settings.discord.helperLong" class="text-xs text-fg-3 line-clamp-1 block">
-                    Show "Watching X on Extreme InfiniTV" on your Discord profile while you use the app. On by default; uncheck a playlist below to mute presence for that account. Desktop only - requires Discord running on the same machine.
+                    Show "Watching X on DREYHOUSE PLAYER" on your Discord profile while you use the app. On by default; uncheck a playlist below to mute presence for that account. Desktop only - requires Discord running on the same machine.
                   </span>
                 </span>
                 <span class="settings-row__control">
@@ -1527,7 +1520,7 @@ const navStructure: NavSection[] = [
             <span class="icon-mark">
               <IconInfoCircle aria-hidden="true" stroke={2} />
             </span>
-            <h3 data-i18n="settings.about.title" class="text-base font-semibold">Extreme InfiniTV</h3>
+            <h3 data-i18n="settings.about.title" class="text-base font-semibold">DREYHOUSE PLAYER</h3>
             <span
               id="update-pill"
               data-i18n="settings.about.updateAvailableShort"
@@ -1622,7 +1615,7 @@ const navStructure: NavSection[] = [
                   </button>
                   <a
                     id="update-github"
-                    href="https://github.com/infinitel8p/Extreme-InfiniTV/releases/latest"
+                    href="https://github.com/MIKE02jo/dreyhouse_player/releases/latest"
                     target="_blank"
                     rel="noopener noreferrer"
                     data-external
@@ -1772,7 +1765,7 @@ const navStructure: NavSection[] = [
               <p class="text-xs text-fg-3">
                 <span data-i18n="settings.licenses.mpegtsPatch">mpegts.js ships with a small audio-track fallback patch.</span>
                 <a
-                  href="https://github.com/infinitel8p/Extreme-InfiniTV/blob/main/patches/mpegts.js.patch"
+                  href="https://github.com/MIKE02jo/dreyhouse_player/blob/main/patches/mpegts.js.patch"
                   target="_blank"
                   rel="noopener noreferrer"
                   data-external
@@ -1855,7 +1848,7 @@ const navStructure: NavSection[] = [
           <div class="px-5 sm:px-6 pb-5">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <a
-                href="https://github.com/infinitel8p/Extreme-InfiniTV/issues/new/choose"
+                href="https://github.com/MIKE02jo/dreyhouse_player/issues/new/choose"
                 target="_blank"
                 rel="noopener noreferrer"
                 data-external
@@ -1864,7 +1857,7 @@ const navStructure: NavSection[] = [
                 <span data-i18n="settings.help.reportIssue">Report a bug</span>
               </a>
               <a
-                href="https://github.com/infinitel8p/Extreme-InfiniTV/discussions/new/choose"
+                href="https://github.com/MIKE02jo/dreyhouse_player/discussions/new/choose"
                 target="_blank"
                 rel="noopener noreferrer"
                 data-external
@@ -1887,51 +1880,6 @@ const navStructure: NavSection[] = [
           </div>
         </div>
 
-        <div id="settings-support" data-settings-item class="settings-surface icon-mark-host scroll-mt-6 lg:scroll-mt-20">
-          <div class="settings-surface__header">
-            <span class="icon-mark icon-mark--heart">
-              <IconHeart aria-hidden="true" stroke={2} />
-            </span>
-            <h3 data-i18n="settings.support.title" class="text-base font-semibold">Like the app?</h3>
-          </div>
-          <div class="px-5 sm:px-6 pb-5 pt-4 flex flex-col gap-4">
-            <p data-i18n="settings.support.intro" class="text-sm text-fg-2">
-              Extreme InfiniTV is free and open source. If it saves you time or sweetens your living-room setup, a small tip helps cover hosting, signing certs, and the next round of features.
-            </p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <a
-                href="https://github.com/sponsors/infinitel8p"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-external
-                class="btn justify-start sm:justify-center">
-                <IconBrandGithub aria-hidden="true" class="btn-icon" />
-                <span data-i18n="settings.support.githubSponsors">GitHub Sponsors</span>
-              </a>
-              <a
-                href="https://ko-fi.com/infinitel8p"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-external
-                class="btn justify-start sm:justify-center">
-                <IconCoffee aria-hidden="true" class="btn-icon" />
-                <span data-i18n="settings.support.kofi">Ko-fi</span>
-              </a>
-              <a
-                href="https://www.paypal.com/paypalme/ludovicoferrara"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-external
-                class="btn justify-start sm:justify-center">
-                <IconBrandPaypal aria-hidden="true" class="btn-icon" />
-                <span data-i18n="settings.support.paypal">PayPal</span>
-              </a>
-            </div>
-            <p data-i18n="settings.support.fineprint" class="text-2xs text-fg-3">
-              No tracking, no ads, no telemetry - just a thank-you button.
-            </p>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -2217,7 +2165,7 @@ const navStructure: NavSection[] = [
         const link = "color: oklch(0.78 0.15 330); text-decoration: underline;"
         // eslint-disable-next-line no-console
         console.log(
-          "%cExtreme InfiniTV%c  thanks for poking around. %csource & issues -> github.com/infinitel8p/Extreme-InfiniTV",
+          "%cDREYHOUSE PLAYER%c  thanks for poking around. %csource & issues -> github.com/MIKE02jo/dreyhouse_player",
           heading,
           body,
           link,
@@ -3209,7 +3157,7 @@ const navStructure: NavSection[] = [
       const target = /** @type {HTMLElement} */ (event.target)
       const btn = target.closest(".accent-btn")
       if (!btn) return
-      setAccent(btn.dataset.accentValue || "fuchsia")
+      setAccent(btn.dataset.accentValue || "emerald")
       syncAccentButtons()
     })
     syncAccentButtons()
@@ -3903,7 +3851,7 @@ const navStructure: NavSection[] = [
       if (isAndroid) {
         dirInput.value = v
           ? prettifyAndroidUri(v)
-          : "/Download/Extreme InfiniTV/ (default)"
+          : "/Download/DREYHOUSE PLAYER/ (default)"
       } else {
         dirInput.value = v
       }
@@ -4180,7 +4128,7 @@ const navStructure: NavSection[] = [
     )
 
     const GITHUB_RELEASES_URL =
-      "https://github.com/infinitel8p/Extreme-InfiniTV/releases"
+      "https://github.com/MIKE02jo/dreyhouse_player/releases"
 
     function setUpdateState(state) {
       if (updateSectionEl) updateSectionEl.setAttribute("data-state", state)

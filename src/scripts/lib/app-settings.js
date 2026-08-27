@@ -43,7 +43,7 @@ const EVT_CHANGED = "xt:settings-changed"
 export const PERF_MODE_EVENT = "xt:perf-mode-changed"
 export const CONTENT_LANGUAGE_EVENT = "xt:content-language-changed"
 export const ACCENT_EVENT = "xt:accent-changed"
-export const ACCENT_PRESETS = ["fuchsia", "rose", "ember", "emerald", "cyan", "blue", "violet"]
+export const ACCENT_PRESETS = ["emerald", "cyan", "blue", "violet", "rose", "ember"]
 export const DENSITY_EVENT = "xt:density-changed"
 export const DENSITY_PRESETS = { compact: 0.75, cozy: 1, comfortable: 1.3 }
 export const PROGRESS_RETENTION_EVENT = "xt:progress-retention-changed"
@@ -263,14 +263,14 @@ export function setPerfMode(on) {
 // Accent color
 export function getAccent() {
   const stored = readLS(KEY_ACCENT, "")
-  return ACCENT_PRESETS.includes(stored) ? stored : "fuchsia"
+  return ACCENT_PRESETS.includes(stored) ? stored : "emerald"
 }
 
 export function setAccent(accentId) {
-  const normalized = ACCENT_PRESETS.includes(accentId) ? accentId : "fuchsia"
-  writeLS(KEY_ACCENT, normalized === "fuchsia" ? "" : normalized)
+  const normalized = ACCENT_PRESETS.includes(accentId) ? accentId : "emerald"
+  writeLS(KEY_ACCENT, normalized === "emerald" ? "" : normalized)
   if (typeof document !== "undefined") {
-    if (normalized === "fuchsia") document.documentElement.removeAttribute("data-accent")
+    if (normalized === "emerald") document.documentElement.removeAttribute("data-accent")
     else document.documentElement.setAttribute("data-accent", normalized)
     document.dispatchEvent(
       new CustomEvent(ACCENT_EVENT, { detail: { value: normalized } })

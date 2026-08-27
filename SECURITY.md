@@ -16,9 +16,9 @@ Only the **latest released version** is supported. Older versions don't receive 
 
 ## Reporting a vulnerability
 
-**Preferred:** open a private advisory at <https://github.com/infinitel8p/Extreme-InfiniTV/security/advisories/new>.
+**Preferred:** open a private advisory at <https://github.com/MIKE02jo/dreyhouse_player/security/advisories/new>.
 
-**Fallback:** email <admin@infinitel8p.com> with `xtream security` in the subject line.
+**Fallback:** email _[YOUR CONTACT EMAIL - fill in before publishing]_ with `dreyhouse-player security` in the subject line.
 
 Please include:
 

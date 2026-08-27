@@ -99,7 +99,7 @@ html.xt-theme-switching::view-transition-new(root) {
     }
 }
 
-/* Theme tokens - slate foundation + soft fuchsia accent.*/
+/* Theme tokens - slate foundation + DREYHOUSE PLAYER emerald accent.*/
 :root {
     color-scheme: light dark;
 }
@@ -124,9 +124,9 @@ html.xt-theme-switching::view-transition-new(root) {
     --color-fg-2: light-dark(oklch(0.4   0.028 var(--xt-tint-hue)), oklch(0.78  0.011 250));
     --color-fg-3: light-dark(oklch(0.45  0.026 var(--xt-tint-hue)), oklch(0.6   0.011 250));
 
-    /* - accent: a single soft fuchsia - */
-    --color-accent:      light-dark(oklch(0.50 0.20 330), oklch(0.78 0.15 330));
-    --color-accent-soft: light-dark(oklch(0.50 0.20 330 / 0.12), oklch(0.78 0.15 330 / 0.18));
+    /* - accent: DREYHOUSE PLAYER emerald (brand green ~#00B871, oklch hue 160) - */
+    --color-accent:      light-dark(oklch(0.50 0.20 160), oklch(0.78 0.15 160));
+    --color-accent-soft: light-dark(oklch(0.50 0.20 160 / 0.12), oklch(0.78 0.15 160 / 0.18));
 
     /* - semantic states - */
     --color-ok:   light-dark(oklch(0.5  0.12 160), oklch(0.79 0.13 160));
@@ -149,13 +149,15 @@ html.xt-theme-switching::view-transition-new(root) {
     --text-eyebrow--letter-spacing:   0.22em;
 }
 
-/* Accent presets */
+/* Accent presets - "emerald" (DREYHOUSE PLAYER's brand green) is the
+   default, expressed directly in the base tokens above rather than as an
+   explicit [data-accent] override, so the un-set state (no data-accent
+   attribute) already renders on-brand. */
 :root {
-    --xt-tint-hue: 330;
-    --accent-swatch-fuchsia: light-dark(oklch(0.50 0.20 330), oklch(0.78 0.15 330));
+    --xt-tint-hue: 160;
+    --accent-swatch-emerald: light-dark(oklch(0.50 0.20 160), oklch(0.78 0.15 160));
     --accent-swatch-rose:    light-dark(oklch(0.50 0.20 20 ), oklch(0.78 0.15 20 ));
     --accent-swatch-ember:   light-dark(oklch(0.50 0.20 55 ), oklch(0.78 0.15 55 ));
-    --accent-swatch-emerald: light-dark(oklch(0.50 0.20 160), oklch(0.78 0.15 160));
     --accent-swatch-cyan:    light-dark(oklch(0.50 0.20 210), oklch(0.78 0.15 210));
     --accent-swatch-blue:    light-dark(oklch(0.50 0.20 250), oklch(0.78 0.15 250));
     --accent-swatch-violet:  light-dark(oklch(0.50 0.20 295), oklch(0.78 0.15 295));
@@ -170,11 +172,6 @@ html.xt-theme-switching::view-transition-new(root) {
     --xt-tint-hue: 55;
     --color-accent:      var(--accent-swatch-ember);
     --color-accent-soft: light-dark(oklch(0.50 0.20 55 / 0.12), oklch(0.78 0.15 55 / 0.18));
-}
-:root[data-accent="emerald"] {
-    --xt-tint-hue: 160;
-    --color-accent:      var(--accent-swatch-emerald);
-    --color-accent-soft: light-dark(oklch(0.50 0.20 160 / 0.12), oklch(0.78 0.15 160 / 0.18));
 }
 :root[data-accent="cyan"] {
     --xt-tint-hue: 210;
@@ -1880,7 +1877,7 @@ html[data-density="comfortable"] :is(#movie-grid, #series-grid) { gap: 1.5rem; }
     font-size: clamp(1.6875rem, 2.4375vw + 1.03125rem, 4.125rem);
     animation: route-hero-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both;
 }
-/* Accent the first glyph of every route title in fuchsia. */
+/* Accent the first glyph of every route title in the brand accent. */
 .route-hero__title::first-letter {
     color: var(--color-accent);
     font-weight: 800;

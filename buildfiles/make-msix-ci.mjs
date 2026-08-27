@@ -35,7 +35,7 @@ if (!/^\d+\.\d+\.\d+$/.test(version)) {
 const msixVersion = `${version}.0`
 const outDir = path.resolve(ROOT, argValue("--out") || path.join("src-tauri", "target", "release", "bundle", "msix"))
 
-const exePath = path.join(ROOT, "src-tauri", "target", "release", "extreme-infinitv.exe")
+const exePath = path.join(ROOT, "src-tauri", "target", "release", "dreyhouse-player.exe")
 if (!existsSync(exePath)) {
   console.error(`Missing ${exePath}. Run \`pnpm tauri build\` first.`)
   process.exit(1)
@@ -79,7 +79,7 @@ console.log(`Using Windows SDK tools from ${sdkTools.dir}`)
 const stagingDir = mkdtempSync(path.join(tmpdir(), "xtream-msix-"))
 console.log(`Staging in ${stagingDir}`)
 
-cpSync(exePath, path.join(stagingDir, "extreme-infinitv.exe"))
+cpSync(exePath, path.join(stagingDir, "dreyhouse-player.exe"))
 cpSync(ffmpegSourcePath, path.join(stagingDir, "infinitv-ffmpeg.exe"))
 mkdirSync(path.join(stagingDir, "Assets"), { recursive: true })
 for (const iconName of manifestIcons) {
@@ -104,7 +104,7 @@ const priOutputPath = path.join(stagingDir, "Resources.pri")
 run(sdkTools.makepri, ["new", "/pr", stagingDir, "/cf", priConfigPath, "/of", priOutputPath, "/o"])
 
 mkdirSync(outDir, { recursive: true })
-const msixPath = path.join(outDir, `InfiniteL8p.XtreamIPTVPlayerLiveTV_${msixVersion}_x64.msix`)
+const msixPath = path.join(outDir, `MIKE02jo.DreyhousePlayer_${msixVersion}_x64.msix`)
 run(sdkTools.makeappx, ["pack", "/d", stagingDir, "/p", msixPath, "/o"])
 
 console.log(`MSIX written to ${msixPath}`)

@@ -33,9 +33,8 @@ try {
 }
 
 // Extract version number. Tauri's NSIS bundle names files as
-// "<productName>_<version>_x64-setup.exe". After the productName rename
-// from "xtream" to "Extreme InfiniTV", the historic prefix may still appear
-// for older artifacts, so accept any prefix and just pull the version.
+// "<productName>_<version>_x64-setup.exe" - accept any prefix and just
+// pull the version, so a future productName change doesn't break this.
 const versionMatch = installerFile.match(/_(\d+\.\d+\.\d+)_x64-setup\.exe$/)
 if (!versionMatch) {
     console.error("❌ Could not parse version from filename:", installerFile)
@@ -45,9 +44,9 @@ const version = versionMatch[1]
 
 // GitHub Releases URL-encodes spaces in artifact filenames as %20. Encode
 // the filename component (but leave the URL slashes alone) so the updater
-// can reach files like "Extreme InfiniTV_1.2.0_x64-setup.exe".
+// can reach files like "DREYHOUSE PLAYER_1.2.0_x64-setup.exe".
 const downloadUrl =
-    `https://github.com/infinitel8p/Extreme-InfiniTV/releases/download/v${version}/` +
+    `https://github.com/MIKE02jo/dreyhouse_player/releases/download/v${version}/` +
     encodeURIComponent(installerFile)
 
 // Build JSON structure

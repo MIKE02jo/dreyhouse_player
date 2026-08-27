@@ -4,7 +4,7 @@ import { isTransientUpdaterError, withUpdaterRetry } from "@/scripts/lib/update-
 describe("isTransientUpdaterError", () => {
   it("matches reqwest transport failures surfaced by the updater command", () => {
     const message =
-      "OTHER:error sending request for url (https://github.com/infinitel8p/Extreme-InfiniTV/releases/download/v1.8.0-beta.106/latest.json)"
+      "OTHER:error sending request for url (https://github.com/MIKE02jo/dreyhouse_player/releases/download/v1.8.0-beta.106/latest.json)"
     expect(isTransientUpdaterError(new Error(message))).toBe(true)
     expect(isTransientUpdaterError(message)).toBe(true)
   })

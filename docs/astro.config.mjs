@@ -4,8 +4,10 @@ import tailwindcss from "@tailwindcss/vite"
 import mdx from "@astrojs/mdx"
 
 export default defineConfig({
-  site: "https://infinitel8p.github.io",
-  base: "/Extreme-InfiniTV",
+  // TODO: set to your published GitHub Pages URL once this docs site is
+  // deployed (see docs/BRANDING.md - "Documentation site").
+  site: "https://MIKE02jo.github.io",
+  base: "/dreyhouse_player",
   trailingSlash: "ignore",
   build: {
     format: "directory",

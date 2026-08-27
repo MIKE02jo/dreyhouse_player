@@ -3,119 +3,30 @@ import Layout from "@/layouts/Layout.astro"
 ---
 
 <Layout pageTitle="Documentation" showVersion={false}>
-  <main class="flex flex-1 min-h-0 flex-col">
-    <noscript>
-      <p class="m-4 text-sm text-fg-2">
-        Documentation requires JavaScript and a network connection. Open it directly at
-        <a class="underline" href="https://infinitel8p.github.io/Extreme-InfiniTV/" target="_blank" rel="noopener">infinitel8p.github.io/Extreme-InfiniTV</a>.
-      </p>
-    </noscript>
-    <div id="xt-docs-skeleton" class="xt-docs-skeleton grid flex-1 place-items-center text-fg-3 text-sm">
-      <span data-i18n="docs.loading">Loading documentation…</span>
-    </div>
-    <iframe
-      id="xt-docs-frame"
-      title="Extreme InfiniTV documentation"
-      data-i18n-attr="title:docs.frameTitle"
-      class="hidden flex-1 w-full border-0 bg-bg"
-      referrerpolicy="no-referrer"
-      sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-    ></iframe>
+  <main class="flex flex-1 min-h-0 flex-col items-center justify-center gap-3 p-8 text-center">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="34 40 172 160"
+      aria-hidden="true"
+      class="h-12 w-auto text-accent opacity-70">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z
+           M80,75 L138,75 L172,58 L192,70 L172,102 L172,83 L112,83 C98,83 90,92 90,104 L90,120 L60,120 L60,104 C60,86 68,75 80,75 Z
+           M160,165 L102,165 L68,182 L48,170 L68,138 L68,157 L128,157 C142,157 150,148 150,136 L150,120 L180,120 L180,136 C180,154 172,165 160,165 Z" />
+    </svg>
+    <h1 class="text-lg font-semibold text-fg" data-i18n="docs.comingSoon.title">
+      Documentation coming soon
+    </h1>
+    <p class="max-w-md text-sm text-fg-3" data-i18n="docs.comingSoon.body">
+      DREYHOUSE PLAYER's own documentation site isn't published yet. In the
+      meantime, the source code, issue tracker and discussions are on GitHub.
+    </p>
+    <a
+      class="mt-2 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-bg hover:opacity-90"
+      href="https://github.com/MIKE02jo/dreyhouse_player"
+      target="_blank"
+      rel="noopener">
+      github.com/MIKE02jo/dreyhouse_player
+    </a>
   </main>
-
-  <script is:inline>
-    (() => {
-      const DOCS_BASE = "https://infinitel8p.github.io/Extreme-InfiniTV"
-      const DOCS_ORIGIN = "https://infinitel8p.github.io"
-      const iframe = document.getElementById("xt-docs-frame")
-      const skeleton = document.getElementById("xt-docs-skeleton")
-      if (!(iframe instanceof HTMLIFrameElement)) return
-
-      const preconnect = document.createElement("link")
-      preconnect.rel = "preconnect"
-      preconnect.href = DOCS_ORIGIN
-      preconnect.crossOrigin = ""
-      document.head.appendChild(preconnect)
-
-      const sanitizePath = (raw) => {
-        if (!raw) return ""
-        const cleaned = raw.replace(/[^a-zA-Z0-9/_-]/g, "")
-        const noLead = cleaned.replace(/^\/+/, "")
-        return noLead.endsWith("/") || noLead === "" ? noLead : noLead + "/"
-      }
-
-      const resolveTheme = () => {
-        const stored = localStorage.getItem("xt_theme") || "system"
-        if (stored === "light" || stored === "dark") return stored
-        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-      }
-
-      const ACCENT_PRESETS = ["fuchsia", "rose", "ember", "emerald", "cyan", "blue", "violet"]
-      const resolveAccent = () => {
-        const stored = localStorage.getItem("xt_accent") || "fuchsia"
-        return ACCENT_PRESETS.includes(stored) ? stored : "fuchsia"
-      }
-
-      const buildSrc = () => {
-        const params = new URLSearchParams(window.location.search)
-        const path = sanitizePath(params.get("p") || "")
-        const url = new URL(`${DOCS_BASE}/${path}`)
-        url.searchParams.set("embed", "1")
-        url.searchParams.set("theme", resolveTheme())
-        const accent = resolveAccent()
-        if (accent !== "fuchsia") url.searchParams.set("accent", accent)
-        return url.toString()
-      }
-
-      iframe.addEventListener("load", () => {
-        if (skeleton) skeleton.classList.add("hidden")
-        iframe.classList.remove("hidden")
-      })
-
-      iframe.src = buildSrc()
-
-      const pushTheme = () => {
-        try {
-          iframe.contentWindow?.postMessage(
-            { type: "xt-docs:theme", theme: resolveTheme() },
-            DOCS_ORIGIN
-          )
-        } catch {}
-      }
-      const pushAccent = () => {
-        try {
-          iframe.contentWindow?.postMessage(
-            { type: "xt-docs:accent", accent: resolveAccent() },
-            DOCS_ORIGIN
-          )
-        } catch {}
-      }
-      window.addEventListener("storage", (event) => {
-        if (event.key === "xt_theme") pushTheme()
-        if (event.key === "xt_accent") pushAccent()
-      })
-      const systemMql = window.matchMedia("(prefers-color-scheme: dark)")
-      systemMql.addEventListener?.("change", pushTheme)
-    })()
-  </script>
 </Layout>
-
-<style>
-  #xt-docs-frame {
-    color-scheme: light dark;
-  }
-  .xt-docs-skeleton {
-    animation: xt-docs-skeleton-pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes xt-docs-skeleton-pulse {
-    0%, 100% { opacity: 0.55; }
-    50%      { opacity: 0.9; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .xt-docs-skeleton { animation: none; opacity: 0.7; }
-  }
-  :root[data-perf-mode="on"] .xt-docs-skeleton {
-    animation: none;
-    opacity: 0.7;
-  }
-</style>

@@ -97,54 +97,54 @@ mod tests {
     #[test]
     fn derive_family_name_handles_double_underscore_full_name() {
         let family_name = derive_family_name(
-            "InfiniteL8p.XtreamIPTVPlayerLiveTV_1.8.0.0_x64__2dv5prtgrhmr4",
+            "MIKE02jo.DreyhousePlayer_1.0.0.0_x64__9wz4trplayer",
         )
         .unwrap();
         assert_eq!(
             family_name,
-            "InfiniteL8p.XtreamIPTVPlayerLiveTV_2dv5prtgrhmr4"
+            "MIKE02jo.DreyhousePlayer_9wz4trplayer"
         );
     }
 
     #[test]
     fn extract_package_full_name_finds_component_after_windows_apps() {
         let full_name = extract_package_full_name(
-            r"C:\Program Files\WindowsApps\InfiniteL8p.XtreamIPTVPlayerLiveTV_1.8.0.0_x64__2dv5prtgrhmr4\xtream.exe",
+            r"C:\Program Files\WindowsApps\MIKE02jo.DreyhousePlayer_1.0.0.0_x64__9wz4trplayer\dreyhouse-player.exe",
         )
         .unwrap();
         assert_eq!(
             full_name,
-            "InfiniteL8p.XtreamIPTVPlayerLiveTV_1.8.0.0_x64__2dv5prtgrhmr4"
+            "MIKE02jo.DreyhousePlayer_1.0.0.0_x64__9wz4trplayer"
         );
     }
 
     #[test]
     fn map_virtualized_path_maps_local_appdata() {
         let mapped = map_virtualized_path(
-            r"C:\Users\test\AppData\Local\com.infinitel8p.xtream\logs",
+            r"C:\Users\test\AppData\Local\com.dreyhouse.player\logs",
             r"C:\Users\test\AppData\Local",
             r"C:\Users\test\AppData\Roaming",
-            "InfiniteL8p.XtreamIPTVPlayerLiveTV_2dv5prtgrhmr4",
+            "MIKE02jo.DreyhousePlayer_9wz4trplayer",
         )
         .unwrap();
         assert_eq!(
             mapped,
-            r"C:\Users\test\AppData\Local\Packages\InfiniteL8p.XtreamIPTVPlayerLiveTV_2dv5prtgrhmr4\LocalCache\Local\com.infinitel8p.xtream\logs"
+            r"C:\Users\test\AppData\Local\Packages\MIKE02jo.DreyhousePlayer_9wz4trplayer\LocalCache\Local\com.dreyhouse.player\logs"
         );
     }
 
     #[test]
     fn map_virtualized_path_maps_roaming_appdata() {
         let mapped = map_virtualized_path(
-            r"C:\Users\test\AppData\Roaming\com.infinitel8p.xtream",
+            r"C:\Users\test\AppData\Roaming\com.dreyhouse.player",
             r"C:\Users\test\AppData\Local",
             r"C:\Users\test\AppData\Roaming",
-            "InfiniteL8p.XtreamIPTVPlayerLiveTV_2dv5prtgrhmr4",
+            "MIKE02jo.DreyhousePlayer_9wz4trplayer",
         )
         .unwrap();
         assert_eq!(
             mapped,
-            r"C:\Users\test\AppData\Local\Packages\InfiniteL8p.XtreamIPTVPlayerLiveTV_2dv5prtgrhmr4\LocalCache\Roaming\com.infinitel8p.xtream"
+            r"C:\Users\test\AppData\Local\Packages\MIKE02jo.DreyhousePlayer_9wz4trplayer\LocalCache\Roaming\com.dreyhouse.player"
         );
     }
 
@@ -154,7 +154,7 @@ mod tests {
             r"C:\Users\test\Downloads\somefile.txt",
             r"C:\Users\test\AppData\Local",
             r"C:\Users\test\AppData\Roaming",
-            "InfiniteL8p.XtreamIPTVPlayerLiveTV_2dv5prtgrhmr4",
+            "MIKE02jo.DreyhousePlayer_9wz4trplayer",
         );
         assert!(mapped.is_none());
     }
@@ -162,15 +162,15 @@ mod tests {
     #[test]
     fn map_virtualized_path_tolerates_trailing_slashes() {
         let mapped = map_virtualized_path(
-            r"C:\Users\test\AppData\Local\com.infinitel8p.xtream\logs\",
+            r"C:\Users\test\AppData\Local\com.dreyhouse.player\logs\",
             r"C:\Users\test\AppData\Local\",
             r"C:\Users\test\AppData\Roaming\",
-            "InfiniteL8p.XtreamIPTVPlayerLiveTV_2dv5prtgrhmr4",
+            "MIKE02jo.DreyhousePlayer_9wz4trplayer",
         )
         .unwrap();
         assert_eq!(
             mapped,
-            r"C:\Users\test\AppData\Local\Packages\InfiniteL8p.XtreamIPTVPlayerLiveTV_2dv5prtgrhmr4\LocalCache\Local\com.infinitel8p.xtream\logs"
+            r"C:\Users\test\AppData\Local\Packages\MIKE02jo.DreyhousePlayer_9wz4trplayer\LocalCache\Local\com.dreyhouse.player\logs"
         );
     }
 }

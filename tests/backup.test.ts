@@ -116,7 +116,7 @@ describe("importAll", () => {
 
   it("imports an older backup that carries no local content at all", async () => {
     const summary = await importAll({
-      format: "extreme-infinitv-backup",
+      format: "dreyhouse-player-backup",
       version: 1,
       creds: { entries: [{ _id: "src-1", type: "xtream" }], selectedId: "src-1" },
       prefs: {},

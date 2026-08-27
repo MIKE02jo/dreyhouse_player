@@ -25,7 +25,7 @@ type ToastEl = HTMLElement & { _xtCleanup?: () => void }
 //   toastError(title, opts?)
 //   toastWarn(title, opts?)
 //
-// variant: "default" (fuchsia) | "success" (--color-ok) | "warn" | "error"
+// variant: "default" (brand accent) | "success" (--color-ok) | "warn" | "error"
 // duration: ms; 0 = sticky (manual dismiss only). Default 4000.
 //
 // Anchored top-center. Hover or keyboard focus pauses the timer.

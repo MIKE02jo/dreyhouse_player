@@ -1,10 +1,10 @@
 [package]
 name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+version = "1.0.0"
+description = "DREYHOUSE PLAYER desktop application backend"
+authors = ["MIKE02jo"]
 license = "GPL-3.0-or-later"
-repository = ""
+repository = "https://github.com/MIKE02jo/dreyhouse_player"
 edition = "2021"
 rust-version = "1.77.2"
 

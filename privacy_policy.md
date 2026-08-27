@@ -1,11 +1,19 @@
-# Privacy Policy for Extreme InfiniTV: IPTV Player
+# Privacy Policy for DREYHOUSE PLAYER: IPTV Player
 
-**Effective Date:** May 1, 2026
-**Last Updated:** May 1, 2026
+**Effective Date:** _[fill in before publishing]_
+**Last Updated:** _[fill in before publishing]_
 
-This Privacy Policy describes how **Extreme InfiniTV: IPTV Player** (the "App") handles information when you use it. The App is published on the Google Play Store and Microsoft Store under the developer name **Ludovico Ferrara** (also doing business as **InfiniteL8p**), referred to in this document as "we", "our", or "us".
+This Privacy Policy describes how **DREYHOUSE PLAYER: IPTV Player** (the
+"App") handles information when you use it. The App is published under the
+developer name **[YOUR NAME / STUDIO NAME]**, referred to in this document
+as "we", "our", or "us".
 
-The App was previously distributed under the name "xtream" prior to a 1.2.0 rebrand. The Android package identifier remains `com.infinitel8p.xtream` for installation continuity. References in source code, store metadata, or update artifacts to either name refer to the same App.
+> This document was adapted from the privacy policy of Extreme InfiniTV,
+> the open-source project DREYHOUSE PLAYER is built on (GPL-3.0-or-later;
+> see NOTICE.md). The bracketed placeholders above and in section 8 must be
+> filled in with your real details before publishing this policy to an app
+> store - Claude can't invent a legal identity, business name, or contact
+> address on your behalf.
 
 ---
 
@@ -72,10 +80,10 @@ We may update this Privacy Policy if the App's features change. Updates will be 
 
 If you have questions about this Privacy Policy, you can reach us at:
 
-- **Developer:** Ludovico Ferrara (InfiniteL8p)
-- **App:** Extreme InfiniTV: IPTV Player (Android package id: `com.infinitel8p.xtream`)
-- **Email:** admin@infinitel8p.com
-- **Source code and issue tracker:** https://github.com/infinitel8p/Extreme-InfiniTV
+- **Developer:** [YOUR NAME / STUDIO NAME]
+- **App:** DREYHOUSE PLAYER: IPTV Player (Android package id: `com.dreyhouse.player`)
+- **Email:** [YOUR CONTACT EMAIL]
+- **Source code and issue tracker:** https://github.com/MIKE02jo/dreyhouse_player
 
 ---
 

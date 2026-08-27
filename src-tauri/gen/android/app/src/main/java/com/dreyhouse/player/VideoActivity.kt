@@ -1,4 +1,4 @@
-package com.infinitel8p.xtream
+package com.dreyhouse.player
 
 import android.app.PictureInPictureParams
 import android.content.Intent

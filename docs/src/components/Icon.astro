@@ -10,7 +10,7 @@ const ICONS = {
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   close: '<path d="M6 6l12 12M18 6L6 18"/>',
   tv: '<rect x="3" y="5" width="18" height="13" rx="2.5"/><path d="M8 21h8"/><path d="M12 18v3"/>',
-  brand: '<path d="M65.6 70.2 A50 50 0 1 1 20.2 115.6" stroke-width="20"/><circle cx="34.6" cy="84.6" r="9" fill="currentColor" stroke="none"/><circle cx="170" cy="120" r="50" stroke-width="20"/><rect x="146.5" y="94" width="13" height="52" rx="6.5" fill="currentColor" stroke="none"/><rect x="164.5" y="102" width="13" height="36" rx="6.5" fill="currentColor" stroke="none"/><rect x="182.5" y="110" width="13" height="20" rx="6.5" fill="currentColor" stroke="none"/>',
+  brand: '<path fill-rule="evenodd" stroke="none" fill="currentColor" d="M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z M80,75 L138,75 L172,58 L192,70 L172,102 L172,83 L112,83 C98,83 90,92 90,104 L90,120 L60,120 L60,104 C60,86 68,75 80,75 Z M160,165 L102,165 L68,182 L48,170 L68,138 L68,157 L128,157 C142,157 150,148 150,136 L150,120 L180,120 L180,136 C180,154 172,165 160,165 Z"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
   subtitles: '<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M10 10.5a1.5 1.5 0 0 0-3 0v3a1.5 1.5 0 0 0 3 0M17 10.5a1.5 1.5 0 0 0-3 0v3a1.5 1.5 0 0 0 3 0"/>',
   volume: '<path d="M15 8a5 5 0 0 1 0 8M17.7 5a9 9 0 0 1 0 14"/><path d="M6 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5A.8.8 0 0 1 11 5v14a.8.8 0 0 1-1.5.5L6 15Z"/>',
@@ -18,7 +18,7 @@ const ICONS = {
 } as const
 
 const VIEWBOXES: Partial<Record<keyof typeof ICONS, string>> = {
-  brand: "8 58 224 124",
+  brand: "34 40 172 160",
 }
 
 export type IconName = keyof typeof ICONS

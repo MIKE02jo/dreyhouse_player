@@ -1,4 +1,4 @@
-package com.infinitel8p.xtream
+package com.dreyhouse.player
 
 import android.graphics.Color
 import android.view.LayoutInflater

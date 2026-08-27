@@ -114,7 +114,7 @@ function buildSeed() {
 
 // Same path the Tauri plugin-store uses for this app's identifier.
 function tauriStorePath() {
-  const identifier = "com.infinitel8p.xtream"
+  const identifier = "com.dreyhouse.player"
   if (process.platform === "win32") {
     return path.join(process.env.APPDATA || "", identifier, ".xtream.creds.json")
   }

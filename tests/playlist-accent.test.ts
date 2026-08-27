@@ -32,14 +32,14 @@ afterEach(() => {
 })
 
 let activeEntry: { accent?: string } | null = null
-let globalAccent = "fuchsia"
+let globalAccent = "emerald"
 
 vi.mock("@/scripts/lib/creds.js", () => ({
   getActiveEntry: async () => activeEntry,
 }))
 
 vi.mock("@/scripts/lib/app-settings.js", () => ({
-  ACCENT_PRESETS: ["fuchsia", "rose", "ember", "emerald", "cyan", "blue", "violet"],
+  ACCENT_PRESETS: ["emerald", "cyan", "blue", "violet", "rose", "ember"],
   ACCENT_EVENT: "xt:accent-changed",
   getAccent: () => globalAccent,
 }))
@@ -48,7 +48,7 @@ import { resolveEffectiveAccent, applyEffectiveAccent } from "@/scripts/lib/play
 
 describe("resolveEffectiveAccent (pure)", () => {
   it("prefers a valid per-playlist override over the global accent", () => {
-    expect(resolveEffectiveAccent("cyan", "fuchsia")).toBe("cyan")
+    expect(resolveEffectiveAccent("cyan", "emerald")).toBe("cyan")
   })
 
   it("falls back to the global accent when the override isn't a known preset", () => {
@@ -64,15 +64,15 @@ describe("resolveEffectiveAccent (pure)", () => {
 describe("applyEffectiveAccent", () => {
   beforeEach(() => {
     activeEntry = null
-    globalAccent = "fuchsia"
+    globalAccent = "emerald"
   })
 
   it("applies the active playlist's override and caches it", async () => {
-    activeEntry = { accent: "emerald" }
+    activeEntry = { accent: "violet" }
     globalAccent = "blue"
     await applyEffectiveAccent()
-    expect(document.documentElement.getAttribute("data-accent")).toBe("emerald")
-    expect(localStorage.getItem("xt_accent_active")).toBe("emerald")
+    expect(document.documentElement.getAttribute("data-accent")).toBe("violet")
+    expect(localStorage.getItem("xt_accent_active")).toBe("violet")
   })
 
   it("falls back to the global accent and clears the cache when there's no override", async () => {
@@ -91,25 +91,25 @@ describe("applyEffectiveAccent", () => {
     expect(localStorage.getItem("xt_accent_active")).toBeNull()
   })
 
-  it("removes data-accent entirely when the effective accent is fuchsia (the default)", async () => {
+  it("removes data-accent entirely when the effective accent is emerald (the default)", async () => {
     document.documentElement.setAttribute("data-accent", "blue")
     activeEntry = null
-    globalAccent = "fuchsia"
+    globalAccent = "emerald"
     await applyEffectiveAccent()
     expect(document.documentElement.hasAttribute("data-accent")).toBe(false)
   })
 
-  it("lets an explicit fuchsia override win over a non-default global accent", async () => {
-    activeEntry = { accent: "fuchsia" }
+  it("lets an explicit emerald override win over a non-default global accent", async () => {
+    activeEntry = { accent: "emerald" }
     globalAccent = "blue"
     await applyEffectiveAccent()
     expect(document.documentElement.hasAttribute("data-accent")).toBe(false)
-    expect(localStorage.getItem("xt_accent_active")).toBe("fuchsia")
+    expect(localStorage.getItem("xt_accent_active")).toBe("emerald")
   })
 
   it("never writes to xt_accent, only to the active-override cache", async () => {
     activeEntry = { accent: "violet" }
-    globalAccent = "fuchsia"
+    globalAccent = "emerald"
     await applyEffectiveAccent()
     expect(localStorage.getItem("xt_accent")).toBeNull()
   })

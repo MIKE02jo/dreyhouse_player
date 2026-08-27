@@ -1,7 +1,7 @@
 {
-  "name": "xtream",
+  "name": "dreyhouse-player",
   "type": "module",
-  "version": "1.8.0",
+  "version": "1.0.0",
   "license": "GPL-3.0-or-later",
   "packageManager": "pnpm@10.31.0",
   "scripts": {
@@ -22,7 +22,14 @@
     "msix": "node ./buildfiles/make-msix-template.mjs",
     "msix:ci": "node ./buildfiles/make-msix-ci.mjs",
     "sync-version": "node ./buildfiles/sync-version.mjs",
-    "fetch-ffmpeg": "node ./src/scripts/ensure-ffmpeg-sidecar.mjs"
+    "fetch-ffmpeg": "node ./src/scripts/ensure-ffmpeg-sidecar.mjs",
+    "branding:sync": "node ./branding/sync-brand.mjs",
+    "branding:icons": "tauri icon ./branding/logo-mark-1024.png"
+  },
+  "pnpm": {
+    "overrides": {
+      "webworkify-webpack": "file:./vendor/webworkify-webpack"
+    }
   },
   "dependencies": {
     "@astrojs/svelte": "^9.0.1",

@@ -1,9 +1,9 @@
-name: extreme-infinitv
+name: dreyhouse-player
 base: core22
 version: "__VERSION__"
 summary: IPTV player for Xtream Codes and M3U / M3U8 playlists
 description: |
-  Extreme InfiniTV plays Xtream Codes providers and plain M3U / M3U8
+  DREYHOUSE PLAYER plays Xtream Codes providers and plain M3U / M3U8
   playlists: live TV with EPG and catch-up, movies, series, custom
   playlists, offline downloads, and TV-remote (D-pad) navigation.
 grade: stable
@@ -15,7 +15,7 @@ layout:
     bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.1
 
 parts:
-  extreme-infinitv:
+  dreyhouse-player:
     plugin: dump
     source: local/app.deb
     source-type: deb
@@ -43,8 +43,8 @@ parts:
     override-build: |
       craftctl default
       # snapd's desktop-file sanitizer drops Icon= unless it starts with ${SNAP}/
-      sed -i -e "s|Icon=extreme-infinitv|Icon=\${SNAP}/usr/share/icons/hicolor/128x128/apps/extreme-infinitv.png|g" \
-        "$CRAFT_PART_INSTALL/usr/share/applications/Extreme InfiniTV.desktop"
+      sed -i -e "s|Icon=dreyhouse-player|Icon=\${SNAP}/usr/share/icons/hicolor/128x128/apps/dreyhouse-player.png|g" \
+        "$CRAFT_PART_INSTALL/usr/share/applications/DREYHOUSE PLAYER.desktop"
       # gst-libav needs these sonames; update-alternatives never runs in a build.
       libdir="$CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET"
       if [ -e "$libdir/blas/libblas.so.3" ]; then
@@ -55,9 +55,9 @@ parts:
       fi
 
 apps:
-  extreme-infinitv:
-    command: usr/bin/extreme-infinitv
-    desktop: "usr/share/applications/Extreme InfiniTV.desktop"
+  dreyhouse-player:
+    command: usr/bin/dreyhouse-player
+    desktop: "usr/share/applications/DREYHOUSE PLAYER.desktop"
     extensions: [gnome]
     environment:
       # Portal-backed GLib proxy/network services are denied under confinement:

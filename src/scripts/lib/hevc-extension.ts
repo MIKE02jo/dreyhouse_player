@@ -14,13 +14,17 @@ const isTauri =
   typeof window !== "undefined" &&
   (!!(window as any).__TAURI_INTERNALS__ || !!(window as any).__TAURI__)
 
+// Intentionally still hosted on the upstream Extreme InfiniTV repo (a
+// third-party Microsoft redistributable re-hosted there, not upstream's own
+// branding) - see docs/BRANDING.md ("Third-party binaries") for why this
+// project doesn't host its own copy yet.
 const APPX_URL =
   "https://github.com/infinitel8p/Extreme-InfiniTV/releases/download/hevc-extension/Microsoft.HEVCVideoExtension_2.0.61931.0_neutral_._8wekyb3d8bbwe.AppxBundle"
 const APPX_SHA256 = "fbcfbc9ed5c1777946b0dad7a5813377960a134e9907d3e0669804d273defe90"
 const APPX_FILENAME = "Microsoft.HEVCVideoExtension.appxbundle"
 const STORE_URL = "ms-windows-store://pdp/?productid=9N4WGH0Z6VHQ"
 const GITHUB_RELEASES_URL =
-  "https://github.com/infinitel8p/Extreme-InfiniTV/releases/latest"
+  "https://github.com/MIKE02jo/dreyhouse_player/releases/latest"
 
 let inFlight = false
 

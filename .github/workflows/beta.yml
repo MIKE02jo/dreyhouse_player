@@ -120,7 +120,7 @@ jobs:
           RELEASE_ID=$(gh api repos/${{ github.repository }}/releases \
             -f tag_name="$TAG" \
             -f target_commitish="$GITHUB_SHA" \
-            -f name="Extreme InfiniTV $TAG (beta)" \
+            -f name="DREYHOUSE PLAYER $TAG (beta)" \
             -f body="$BODY" \
             -F draft=true \
             -F prerelease=true \
@@ -380,7 +380,7 @@ jobs:
             find src-tauri/gen/android/app/build/outputs -type f
             exit 1
           fi
-          cp "$APK" "$OUT/Extreme InfiniTV_${VERSION}.apk"
+          cp "$APK" "$OUT/DREYHOUSE PLAYER_${VERSION}.apk"
           echo "out=$OUT" >> "$GITHUB_OUTPUT"
 
       - name: Build signed AAB (mobile)
@@ -412,7 +412,7 @@ jobs:
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: com.infinitel8p.xtream
+          packageName: com.dreyhouse.player
           releaseFiles: ${{ steps.locate-aab.outputs.aab }}
           track: beta
           status: completed

@@ -69,13 +69,13 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   <div class="hidden lg:flex flex-col items-center gap-1 rail-expanded:flex-row rail-expanded:items-center">
     <a
       href="/"
-      aria-label="Extreme InfiniTV - Home"
+      aria-label="DREYHOUSE PLAYER - Home"
       data-i18n-attr="aria-label:sidebar.brandHome"
       class="brand-mark group [view-transition-name:brand-mark]
              flex items-center gap-3 p-2.5 rail-expanded:px-2 rail-expanded:py-2 outline-none">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox="8 58 224 124"
+        viewBox="34 40 172 160"
         stroke-linecap="round"
         stroke-linejoin="round"
         aria-hidden="true"
@@ -83,13 +83,11 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
         <g class="brand-mark__mark">
           <path
             id="brand-mark-path"
-            class="brand-mark__base brand-mark__base--stroke"
-            d="M65.6 70.2 A50 50 0 1 1 20.2 115.6" />
-          <circle class="brand-mark__base brand-mark__base--fill" cx="34.6" cy="84.6" r="9" />
-          <circle class="brand-mark__base brand-mark__base--stroke" cx="170" cy="120" r="50" />
-          <rect class="brand-mark__base brand-mark__base--fill" x="146.5" y="94" width="13" height="52" rx="6.5" />
-          <rect class="brand-mark__base brand-mark__base--fill" x="164.5" y="102" width="13" height="36" rx="6.5" />
-          <rect class="brand-mark__base brand-mark__base--fill" x="182.5" y="110" width="13" height="20" rx="6.5" />
+            class="brand-mark__base brand-mark__base--fill"
+            fill-rule="evenodd"
+            d="M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z
+               M80,75 L138,75 L172,58 L192,70 L172,102 L172,83 L112,83 C98,83 90,92 90,104 L90,120 L60,120 L60,104 C60,86 68,75 80,75 Z
+               M160,165 L102,165 L68,182 L48,170 L68,138 L68,157 L128,157 C142,157 150,148 150,136 L150,120 L180,120 L180,136 C180,154 172,165 160,165 Z" />
         </g>
         <g class="brand-mark__trail">
           <circle r="11.5" fill="currentColor" opacity="1"    class="brand-mark__dot brand-mark__dot--1" />
@@ -101,7 +99,7 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
         </g>
       </svg>
       <span class="rail-reveal hidden rail-expanded:inline-flex items-baseline truncate text-[0.9375rem] tracking-[-0.02em]">
-        <span class="font-semibold text-fg">Extreme&nbsp;Infini</span><span class="font-extrabold text-accent tracking-[0.04em] ml-[0.05em]">TV</span>
+        <span class="font-semibold text-fg">Dreyhouse&nbsp;</span><span class="font-extrabold text-accent tracking-[0.04em] ml-[0.05em]">Player</span>
       </span>
     </a>
     <button
@@ -738,7 +736,7 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   }
 
   .brand-mark__dot {
-    offset-path: path('M120,120 A50 50 0 1 1 20 120 A50 50 0 1 1 120 120 A50 50 0 1 0 220 120 A50 50 0 1 0 120 120 Z');
+    offset-path: path('M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z');
     offset-rotate: 0deg;
     offset-distance: 0%;
     animation: brand-mark-orbit 6s linear infinite reverse;

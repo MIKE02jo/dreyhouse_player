@@ -12,8 +12,8 @@ interface Props {
 }
 const { pageTitle, showVersion = true } = Astro.props
 const documentTitle = pageTitle
-  ? `${pageTitle} | Extreme InfiniTV`
-  : "Extreme InfiniTV"
+  ? `${pageTitle} | DREYHOUSE PLAYER`
+  : "DREYHOUSE PLAYER"
 ---
 
 <!doctype html>
@@ -26,11 +26,11 @@ const documentTitle = pageTitle
     />
     <title>{documentTitle}</title>
     <meta name="x-app-version" content={pkg.version} />
-    <meta name="theme-color" content="#f2dff0" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0e1628" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#d6eddf" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta property="og:title" content="Extreme InfiniTV" />
-    <meta property="og:image" content="https://raw.githubusercontent.com/infinitel8p/Extreme-InfiniTV/refs/heads/main/src-tauri/icons/logos/icon-1024.png" />
+    <meta property="og:title" content="DREYHOUSE PLAYER" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/MIKE02jo/dreyhouse_player/main/src-tauri/icons/logos/icon-1024.png" />
     <script is:inline>
       try {
         if (sessionStorage.getItem("xt_splash_done") === "1") {
@@ -204,15 +204,15 @@ const documentTitle = pageTitle
         if (currentTheme === "light") document.documentElement.style.colorScheme = "light";
         else if (currentTheme === "dark") document.documentElement.style.colorScheme = "dark";
 
-        var KNOWN_ACCENTS = ["fuchsia", "rose", "ember", "emerald", "cyan", "blue", "violet"];
+        var KNOWN_ACCENTS = ["emerald", "rose", "ember", "cyan", "blue", "violet"];
         var storedAccent = localStorage.getItem("xt_accent") || "";
-        if (storedAccent && storedAccent !== "fuchsia" && KNOWN_ACCENTS.indexOf(storedAccent) !== -1) {
+        if (storedAccent && storedAccent !== "emerald" && KNOWN_ACCENTS.indexOf(storedAccent) !== -1) {
           document.documentElement.setAttribute("data-accent", storedAccent);
         }
         // Per-playlist override cache (playlist-accent.ts) wins over xt_accent.
         var activeAccentOverride = localStorage.getItem("xt_accent_active") || "";
         if (activeAccentOverride && KNOWN_ACCENTS.indexOf(activeAccentOverride) !== -1) {
-          if (activeAccentOverride === "fuchsia") document.documentElement.removeAttribute("data-accent");
+          if (activeAccentOverride === "emerald") document.documentElement.removeAttribute("data-accent");
           else document.documentElement.setAttribute("data-accent", activeAccentOverride);
         }
 
@@ -283,32 +283,28 @@ const documentTitle = pageTitle
               fill="none"
               stroke="none"
               aria-hidden="true"
-              d="M120,120 A50 50 0 1 1 20 120 A50 50 0 1 1 120 120 A50 50 0 1 0 220 120 A50 50 0 1 0 120 120 Z"
+              d="M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z"
             />
             <g class="xt-app-splash__mark">
               <path
-                id="xt-app-splash-arc"
-                class="xt-app-splash__base xt-app-splash__base--arc"
-                pathLength="100"
-                d="M65.6 70.2 A50 50 0 1 1 20.2 115.6"
+                class="xt-app-splash__base xt-app-splash__base--glyph"
+                fill-rule="evenodd"
+                d="M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z
+                   M80,75 L138,75 L172,58 L192,70 L172,102 L172,83 L112,83 C98,83 90,92 90,104 L90,120 L60,120 L60,104 C60,86 68,75 80,75 Z
+                   M160,165 L102,165 L68,182 L48,170 L68,138 L68,157 L128,157 C142,157 150,148 150,136 L150,120 L180,120 L180,136 C180,154 172,165 160,165 Z"
               />
-              <circle class="xt-app-splash__base xt-app-splash__base--fill" cx="34.6" cy="84.6" r="9" />
-              <circle class="xt-app-splash__base xt-app-splash__base--ring" cx="170" cy="120" r="50" />
-              <rect class="xt-app-splash__base xt-app-splash__base--fill" x="146.5" y="94" width="13" height="52" rx="6.5" />
-              <rect class="xt-app-splash__base xt-app-splash__base--fill" x="164.5" y="102" width="13" height="36" rx="6.5" />
-              <rect class="xt-app-splash__base xt-app-splash__base--fill" x="182.5" y="110" width="13" height="20" rx="6.5" />
             </g>
             <g class="xt-app-splash__comet" aria-hidden="true">
-              <path class="xt-app-splash__comet-trail xt-app-splash__comet-trail--near" pathLength="100" fill="none" stroke-linecap="round" d="M120,120 A50 50 0 1 1 20 120 A50 50 0 1 1 120 120 A50 50 0 1 0 220 120 A50 50 0 1 0 120 120 Z" />
-              <path class="xt-app-splash__comet-trail xt-app-splash__comet-trail--mid" pathLength="100" fill="none" stroke-linecap="round" d="M120,120 A50 50 0 1 1 20 120 A50 50 0 1 1 120 120 A50 50 0 1 0 220 120 A50 50 0 1 0 120 120 Z" />
-              <path class="xt-app-splash__comet-trail xt-app-splash__comet-trail--far" pathLength="100" fill="none" stroke-linecap="round" d="M120,120 A50 50 0 1 1 20 120 A50 50 0 1 1 120 120 A50 50 0 1 0 220 120 A50 50 0 1 0 120 120 Z" />
+              <path class="xt-app-splash__comet-trail xt-app-splash__comet-trail--near" pathLength="100" fill="none" stroke-linecap="round" d="M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z" />
+              <path class="xt-app-splash__comet-trail xt-app-splash__comet-trail--mid" pathLength="100" fill="none" stroke-linecap="round" d="M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z" />
+              <path class="xt-app-splash__comet-trail xt-app-splash__comet-trail--far" pathLength="100" fill="none" stroke-linecap="round" d="M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z" />
               <circle class="xt-app-splash__comet-part xt-app-splash__comet-halo" cx="0" cy="0" r="15" fill="url(#xt-comet-halo-gradient)" />
               <circle class="xt-app-splash__comet-part xt-app-splash__comet-head" cx="0" cy="0" r="4" fill="url(#xt-comet-head-gradient)" />
             </g>
           </svg>
         </div>
         <span class="xt-app-splash__wordmark">
-          <span class="xt-app-splash__wordmark-1">Extreme&nbsp;Infini</span><span class="xt-app-splash__wordmark-2">TV</span>
+          <span class="xt-app-splash__wordmark-1">Dreyhouse&nbsp;</span><span class="xt-app-splash__wordmark-2">Player</span>
         </span>
       </div>
     </div>
@@ -331,7 +327,7 @@ const documentTitle = pageTitle
           id="app-version"
           class="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] rounded-full bg-bg/75 backdrop-blur-sm px-2 py-0.5 text-2xs text-fg-3 tabular-nums pointer-events-none"
         >
-          Extreme InfiniTV v{pkg.version}
+          DREYHOUSE PLAYER v{pkg.version}
         </div>
       )
     }
@@ -608,53 +604,12 @@ const documentTitle = pageTitle
   .xt-app-splash__base {
     opacity: 1;
   }
-  .xt-app-splash__base--arc {
-    fill: none;
-    stroke: var(--color-accent);
-    stroke-width: 20;
-    /* Endpoints must sit inside the gap; a boundary on one renders round-cap dots. */
-    stroke-dasharray: 100 102;
-    stroke-dashoffset: 101;
-  }
-  .xt-app-splash__base--ring {
-    fill: none;
-    stroke: var(--color-accent);
-    stroke-width: 20;
-  }
-  .xt-app-splash__base--fill {
+  .xt-app-splash__base--glyph {
     fill: var(--color-accent);
-  }
-  /* Left-to-right build paced with the launch chime: dot > arc > ring > bars. */
-  .xt-app-splash__mark circle.xt-app-splash__base--fill {
     animation: xt-app-splash-el-in 400ms cubic-bezier(0.16, 1, 0.3, 1) 150ms backwards;
   }
-  .xt-app-splash__base--ring {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: xt-app-splash-ring-in 700ms cubic-bezier(0.16, 1, 0.3, 1) 1100ms backwards;
-  }
-  .xt-app-splash__mark rect {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: xt-app-splash-bar-in 260ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  }
-  .xt-app-splash__mark rect:nth-of-type(1) { animation-delay: 1850ms; }
-  .xt-app-splash__mark rect:nth-of-type(2) { animation-delay: 1940ms; }
-  .xt-app-splash__mark rect:nth-of-type(3) { animation-delay: 2030ms; }
   @keyframes xt-app-splash-el-in {
     from { opacity: 0; }
-  }
-  @keyframes xt-app-splash-ring-in {
-    from { opacity: 0; transform: scale(0.92); }
-  }
-  @keyframes xt-app-splash-bar-in {
-    from { opacity: 0; transform: scaleY(0.25); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .xt-app-splash__base--arc {
-      stroke-dasharray: none;
-      stroke-dashoffset: 0;
-    }
   }
   .xt-app-splash__comet {
     pointer-events: none;
@@ -669,7 +624,7 @@ const documentTitle = pageTitle
      its default (bbox center) on every part - a non-center anchor on the
      tail's SVG ellipse throws its position off-path in Chromium. */
   .xt-app-splash__comet-part {
-    offset-path: path("M120,120 A50 50 0 1 1 20 120 A50 50 0 1 1 120 120 A50 50 0 1 0 220 120 A50 50 0 1 0 120 120 Z");
+    offset-path: path("M78,48 L162,48 L198,120 L162,192 L78,192 L42,120 Z");
     offset-rotate: auto;
     animation: xt-app-splash-comet-travel 6000ms linear infinite;
   }
@@ -885,7 +840,7 @@ const documentTitle = pageTitle
   const SpatialNavigation = window.SpatialNavigation
 
   console.log(
-    "%c∞ Extreme InfiniTV%c\nCurious? Source: https://github.com/infinitel8p/Extreme-InfiniTV",
+    "%c⬡ DREYHOUSE PLAYER%c\nCurious? Source: https://github.com/MIKE02jo/dreyhouse_player",
     "color: oklch(0.78 0.15 330); font: 600 1rem/1 ui-sans-serif, system-ui;",
     "color: oklch(0.6 0.011 250); font: 0.75rem/1.4 ui-sans-serif, system-ui;"
   )

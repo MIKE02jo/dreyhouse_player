@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  TODO before first Microsoft Store submission: Publisher below is a
+  PLACEHOLDER. It must be replaced with the CN= identity Microsoft Partner
+  Center issues once you reserve "DREYHOUSE PLAYER" (or your chosen name)
+  under your own developer account there - the original project's
+  Publisher/Identity Name are tied to its owner's account and cannot be
+  reused. Update Identity Name and Publisher together once you have real
+  values; everything else in this file is already DREYHOUSE PLAYER-branded.
+-->
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap uap10 rescap">
-  <Identity Name="InfiniteL8p.XtreamIPTVPlayerLiveTV" Publisher="CN=40AE69D4-0341-41AF-840F-E0203995155A" Version="__VERSION__" ProcessorArchitecture="x64" />
+  <Identity Name="MIKE02jo.DreyhousePlayer" Publisher="CN=REPLACE_WITH_YOUR_PARTNER_CENTER_PUBLISHER_ID" Version="__VERSION__" ProcessorArchitecture="x64" />
   <Properties>
-    <DisplayName>Extreme InfiniTV - Live and IPTV</DisplayName>
-    <PublisherDisplayName>InfiniteL8p</PublisherDisplayName>
+    <DisplayName>DREYHOUSE PLAYER - Live and IPTV</DisplayName>
+    <PublisherDisplayName>MIKE02jo</PublisherDisplayName>
     <Description>Easily stream your favorite IPTV using your Xtream Codes Login or M3U8 Playlist.</Description>
     <Logo>Assets\StoreLogo.png</Logo>
     <uap10:PackageIntegrity>
@@ -20,8 +29,8 @@
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
   <Applications>
-    <Application Id="EXTREMEINFINITV" Executable="extreme-infinitv.exe" EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements BackgroundColor="transparent" DisplayName="Extreme InfiniTV" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Extreme InfiniTV">
+    <Application Id="DREYHOUSEPLAYER" Executable="dreyhouse-player.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements BackgroundColor="transparent" DisplayName="DREYHOUSE PLAYER" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="DREYHOUSE PLAYER">
         <uap:DefaultTile Square71x71Logo="Assets\Square71x71Logo.png" />
       </uap:VisualElements>
     </Application>

@@ -432,7 +432,7 @@
     to { stroke-dashoffset: 0; }
   }
 
-  /* Right-side progress bar: a thin slate track that fills with fuchsia
+  /* Right-side progress bar: a thin slate track that fills with the brand accent
      as the aggregate byte progress climbs. While pending, a soft highlight
      band sweeps across the filled portion to telegraph that work is still
      in flight. When all done, the bar locks at 100% and the shimmer stops. */

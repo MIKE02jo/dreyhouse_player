@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Extreme InfiniTV</string>
-    <string name="main_activity_title">Extreme InfiniTV</string>
+    <string name="app_name">DREYHOUSE PLAYER</string>
+    <string name="main_activity_title">DREYHOUSE PLAYER</string>
     <string name="render_gone_oom">Display restarted to free memory</string>
     <string name="render_gone_crash">Display crashed, reloading</string>
     <string name="render_gone_repeat">Display keeps crashing. Restart the app if this continues.</string>

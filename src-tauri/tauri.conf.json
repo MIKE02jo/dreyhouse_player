@@ -1,8 +1,8 @@
 {
-  "productName": "Extreme InfiniTV",
-  "mainBinaryName": "extreme-infinitv",
-  "version": "1.8.0",
-  "identifier": "com.infinitel8p.xtream",
+  "productName": "DREYHOUSE PLAYER",
+  "mainBinaryName": "dreyhouse-player",
+  "version": "1.0.0",
+  "identifier": "com.dreyhouse.player",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:4321",
@@ -13,7 +13,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "Extreme InfiniTV",
+        "title": "DREYHOUSE PLAYER",
         "width": 1300,
         "height": 850,
         "minWidth": 900,
@@ -45,12 +45,12 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "publisher": "InfiniteL8p",
+    "publisher": "MIKE02jo",
     "category": "public.app-category.video",
-    "copyright": "© 2025 Ludovico Ferrara",
+    "copyright": "© 2026 DREYHOUSE PLAYER",
     "createUpdaterArtifacts": true,
     "android": {
-      "versionCode": 100800090
+      "versionCode": 100000001
     },
     "icon": [
       "icons/32x32.png",
@@ -60,12 +60,11 @@
       "icons/icon.ico"
     ]
   },
-
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE2NERBRENFQzczNDZENjQKUldSa2JUVEh6cTFOcHJzVi9PYTB0TWZFYUZEV3RrdW5LRk56cmhDcjdxQlJ1QldjbXAwNEVxWHQK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEYxRDlFQTFDM0VENUUwMkMKUldRczROVStIT3JaOFkxK1FTamZERkxoL0dLM0dtSENqQ2tIdVQyRzh4WTJuZEl5M3ZnVnlEYngK",
       "endpoints": [
-        "https://github.com/infinitel8p/Extreme-InfiniTV/releases/latest/download/latest.json"
+        "https://github.com/MIKE02jo/dreyhouse_player/releases/latest/download/latest.json"
       ]
     }
   }

@@ -3575,7 +3575,7 @@ function pushDiscordPresence(channel, kind) {
     details: `Watching ${channel.name || `Channel ${channel.id}`}`,
     state: stateLine || (kind === "live" ? "Live TV" : ""),
     largeImage: safeLogo || "logo",
-    largeText: activePlaylistTitle || "Extreme InfiniTV",
+    largeText: activePlaylistTitle || "DREYHOUSE PLAYER",
     smallImage: "live",
     smallText: "Live",
     startTimestamp: Date.now(),

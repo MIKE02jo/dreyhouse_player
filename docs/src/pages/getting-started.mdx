@@ -1,7 +1,7 @@
 ---
 layout: ../layouts/DocsLayout.astro
 title: "Getting started"
-description: "Install Extreme InfiniTV and add your first playlist."
+description: "Install DREYHOUSE PLAYER and add your first playlist."
 lede: "Install on your platform, sign in once, and start watching."
 ---
 
@@ -13,34 +13,30 @@ Pick the download that matches your device. All builds come from the same source
 
 | Platform | Where to get it |
 |---|---|
-| Windows 10 / 11 | [Microsoft Store](https://apps.microsoft.com/detail/9NN162Z0WXSR) or [NSIS installer](https://github.com/infinitel8p/Extreme-InfiniTV/releases/latest) |
-| Android phone / tablet / TV | [Google Play](https://play.google.com/store/apps/details?id=com.infinitel8p.xtream) or APK from [Releases](https://github.com/infinitel8p/Extreme-InfiniTV/releases/latest) |
-| macOS | `.dmg` from [Releases](https://github.com/infinitel8p/Extreme-InfiniTV/releases/latest) |
-| Linux | [Snap Store](https://snapcraft.io/extreme-infinitv) (`sudo snap install extreme-infinitv`), or `.AppImage` / `.deb` / `.rpm` from [Releases](https://github.com/infinitel8p/Extreme-InfiniTV/releases/latest) |
-| Raspberry Pi 4 / 5 | 64-bit OS required. Same Snap install, or the arm64 `.deb` / `.AppImage` from [Releases](https://github.com/infinitel8p/Extreme-InfiniTV/releases/latest) |
+| Windows 10 / 11 | NSIS installer from [Releases](https://github.com/MIKE02jo/dreyhouse_player/releases/latest) |
+| Android phone / tablet / TV | APK from [Releases](https://github.com/MIKE02jo/dreyhouse_player/releases/latest) |
+| macOS | `.dmg` from [Releases](https://github.com/MIKE02jo/dreyhouse_player/releases/latest) |
+| Linux | `.AppImage` / `.deb` / `.rpm` from [Releases](https://github.com/MIKE02jo/dreyhouse_player/releases/latest) |
+| Raspberry Pi 4 / 5 | 64-bit OS required. arm64 `.deb` / `.AppImage` from [Releases](https://github.com/MIKE02jo/dreyhouse_player/releases/latest) |
 
-The Windows desktop build and the Linux AppImage auto-update from GitHub Releases; you can turn this off with the **Automatic updates** toggle in **Settings > About > App update** (the toggle only appears on builds that have the updater). The Microsoft Store, Google Play, and the Snap Store handle updates themselves. Other Linux packages (deb / rpm) do not auto-update. On platforms without a built-in updater (web, macOS, and Microsoft Store / MSIX builds), the app shows a hint when a newer version is available; Play Store installs link straight to Google Play.
+<Callout>
+App-store listings (Microsoft Store, Google Play, Snap Store) aren't set up
+for this fork yet - see `docs/BRANDING.md` in the repo. This table will
+gain store links once those are published.
+</Callout>
+
+The Windows desktop build and the Linux AppImage auto-update from GitHub Releases; you can turn this off with the **Automatic updates** toggle in **Settings > About > App update** (the toggle only appears on builds that have the updater). Other Linux packages (deb / rpm) do not auto-update. On platforms without a built-in updater (web and macOS builds), the app shows a hint when a newer version is available.
 
 ### Beta updates
 
-To try new features early, open **Settings > About > App update** and switch the **Update channel** to **Beta**. Beta builds ship more often and may be unstable. Updating to one works right from the app, the same way as a stable release. The channel picker is hidden on Microsoft Store and Snap installs, since those stores manage updates themselves (and only ship stable releases).
+To try new features early, open **Settings > About > App update** and switch the **Update channel** to **Beta**. Beta builds ship more often and may be unstable. Updating to one works right from the app, the same way as a stable release.
 
-### Install via winget (Windows)
+### macOS: "DREYHOUSE PLAYER.app" cannot be opened
 
-If you prefer the command line, install directly from the Microsoft Store source:
-
-```powershell
-winget install --id 9NN162Z0WXSR --source msstore
-```
-
-You get the same build as the Store, including automatic updates.
-
-### macOS: "Extreme InfiniTV.app" cannot be opened
-
-The macOS build is not yet notarized by Apple, so Gatekeeper blocks it on first launch with a message like *"Apple could not verify Extreme InfiniTV.app is free of malware"*. After dragging the app from the `.dmg` into `/Applications`, remove the quarantine flag from a Terminal:
+The macOS build is not yet notarized by Apple, so Gatekeeper blocks it on first launch with a message like *"Apple could not verify DREYHOUSE PLAYER.app is free of malware"*. After dragging the app from the `.dmg` into `/Applications`, remove the quarantine flag from a Terminal:
 
 ```bash
-xattr -dr com.apple.quarantine "/Applications/Extreme InfiniTV.app"
+xattr -dr com.apple.quarantine "/Applications/DREYHOUSE PLAYER.app"
 ```
 
 Then open the app normally. You only need to do this once per install.

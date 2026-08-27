@@ -32,7 +32,7 @@ export async function applyEffectiveAccent(): Promise<void> {
       : ""
   const effectiveAccent = overrideAccent || getAccent()
   if (typeof document !== "undefined") {
-    if (effectiveAccent === "fuchsia") document.documentElement.removeAttribute("data-accent")
+    if (effectiveAccent === "emerald") document.documentElement.removeAttribute("data-accent")
     else document.documentElement.setAttribute("data-accent", effectiveAccent)
   }
   writeActiveAccentCache(overrideAccent)

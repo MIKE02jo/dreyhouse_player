@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  tmp: '>=0.2.6'
+  webworkify-webpack: file:./vendor/webworkify-webpack
 
 patchedDependencies:
   mpegts.js@1.8.0:
@@ -2630,7 +2630,6 @@ packages:
 
   shaka-player@5.2.6:
     resolution: {integrity: sha512-/AIgm9CzhTJu5Ba5l6kKczQn7k6MeMqpQmbtvRrUfgYnWxnQfZ20bhQd7TtD5sCypE9x+nr9vxA6bVBlz+nP8A==}
-    engines: {node: '>=18'}
 
   sharp@0.35.3:
     resolution: {integrity: sha512-ej0zVHuZGHCiABXcNxeYhpRnPNPAcvbG8RMdBAhDAxLKkCRVSpK3Iyu7qbqw3JMzoj0REeM6f3tJLtVwl0023Q==}
@@ -3043,9 +3042,8 @@ packages:
     resolution: {integrity: sha512-BMhLD/Sw+GbJC21C/UgyaZX41nPt8bUTg+jWyDeg7e7YN4xOM05YPSIXceACnXVtqyEw/LMClUQMtMZ+PGGpqQ==}
     engines: {node: '>=20'}
 
-  webworkify-webpack@https://codeload.github.com/xqq/webworkify-webpack/tar.gz/24d1e719b4a6cac37a518b2bb10fe124527ef4ef:
-    resolution: {tarball: https://codeload.github.com/xqq/webworkify-webpack/tar.gz/24d1e719b4a6cac37a518b2bb10fe124527ef4ef}
-    version: 2.1.5
+  webworkify-webpack@file:vendor/webworkify-webpack:
+    resolution: {directory: vendor/webworkify-webpack, type: directory}
 
   whatwg-mimetype@5.0.0:
     resolution: {integrity: sha512-sXcNcHOC51uPGF0P/D4NVtrkjSU2fNsm9iog4ZvZJsL3rjoDAzXZhkm2MWt1y+PUdggKAYVoMAIYcs78wJ51Cw==}
@@ -5300,7 +5298,7 @@ snapshots:
   mpegts.js@1.8.0(patch_hash=2ea2f6966ba08084f38602edaf3dd8b7735c3bdd68a02e8674b737077463c026):
     dependencies:
       es6-promise: 4.2.8
-      webworkify-webpack: https://codeload.github.com/xqq/webworkify-webpack/tar.gz/24d1e719b4a6cac37a518b2bb10fe124527ef4ef
+      webworkify-webpack: file:vendor/webworkify-webpack
 
   mrmime@2.0.1: {}
 
@@ -5926,7 +5924,7 @@ snapshots:
 
   webidl-conversions@8.0.1: {}
 
-  webworkify-webpack@https://codeload.github.com/xqq/webworkify-webpack/tar.gz/24d1e719b4a6cac37a518b2bb10fe124527ef4ef: {}
+  webworkify-webpack@file:vendor/webworkify-webpack: {}
 
   whatwg-mimetype@5.0.0: {}
 

@@ -42,7 +42,7 @@ import {
 import { log } from "@/scripts/lib/log.js"
 
 const FORMAT_VERSION = 1
-const FORMAT_NAME = "extreme-infinitv-backup"
+const FORMAT_NAME = "dreyhouse-player-backup"
 const LEGACY_FORMAT_NAMES = ["xtream-infinitv-backup"]
 
 function isAcceptablePath(value) {
@@ -216,12 +216,12 @@ export async function importAll(blob) {
 }
 
 /**
- * Suggested filename for downloads, e.g. extreme-infinitv-backup-2026-04-30.json.
+ * Suggested filename for downloads, e.g. dreyhouse-player-backup-2026-04-30.json.
  */
 export function suggestedFilename() {
   const d = new Date()
   const pad = (n) => String(n).padStart(2, "0")
-  return `extreme-infinitv-backup-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.json`
+  return `dreyhouse-player-backup-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.json`
 }
 
 export const BACKUP_FORMAT_NAME = FORMAT_NAME

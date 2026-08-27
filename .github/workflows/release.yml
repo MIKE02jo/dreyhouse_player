@@ -34,7 +34,7 @@ name: Release
 #                                       Store API access
 #  MSSTORE_CLIENT_SECRET                App registration client secret
 #  SNAPCRAFT_STORE_CREDENTIALS          output of `snapcraft export-login` for the
-#                                       extreme-infinitv Snap Store listing, scoped to
+#                                       dreyhouse-player Snap Store listing, scoped to
 #                                       package_push/package_release; snap publishing
 #                                       is skipped when unset
 #
@@ -53,7 +53,7 @@ name: Release
 # exe + ffmpeg sidecar + logo assets and packs an unsigned .msix with the
 # Windows SDK tools (`pnpm msix:ci`, see buildfiles/make-msix-ci.mjs), uploaded
 # as the msix-package artifact. The Store re-signs on ingestion. publish-msstore
-# submits that package to the existing Store listing (product Id 9NN162Z0WXSR)
+# submits that package to the existing Store listing (product Id REPLACE_WITH_YOUR_MSSTORE_PRODUCT_ID - see docs/BRANDING.md)
 # when the MSSTORE_* secrets are set. `pnpm msix` (buildfiles/make-msix-template.mjs)
 # remains the manual fallback - see `cmds.md`.
 #
@@ -173,7 +173,7 @@ jobs:
           model: claude-sonnet-4.5
           max-tokens: 4000
           system-prompt: |
-            You write user-facing release notes for "Extreme InfiniTV", an IPTV
+            You write user-facing release notes for "DREYHOUSE PLAYER", an IPTV
             player built with Astro + Svelte 5 and Tauri 2. It ships on
             Windows desktop (NSIS + Microsoft Store), Android phone / tablet /
             TV (Google Play + APK), macOS, Linux, and the web. Audience: end
@@ -340,34 +340,34 @@ jobs:
               '',
               '| Platform | File |',
               '|----------|------|',
-              `| Windows 10/11 (recommended installer) | ${fileLink(`Extreme InfiniTV_${version}_x64-setup.exe`)} |`,
-              `| Windows on ARM (Snapdragon laptops) | ${fileLink(`Extreme InfiniTV_${version}_arm64-setup.exe`)} |`,
-              `| Windows (MSI alternative) | ${fileLink(`Extreme InfiniTV_${version}_x64_en-US.msi`)} |`,
-              `| macOS (Apple Silicon + Intel) | ${fileLink(`Extreme InfiniTV_${version}_universal.dmg`)} |`,
-              `| Linux Snap (most distros) | [Snap Store](https://snapcraft.io/extreme-infinitv) or \`sudo snap install extreme-infinitv\` |`,
-              `| Linux Debian / Ubuntu / Mint | ${fileLink(`Extreme InfiniTV_${version}_amd64.deb`)} |`,
-              `| Linux ARM64 - Raspberry Pi 4/5 (64-bit OS), Debian / Ubuntu | ${fileLink(`Extreme InfiniTV_${version}_arm64.deb`)} |`,
-              `| Linux Fedora / openSUSE / RHEL | ${fileLink(`Extreme InfiniTV-${version}-1.x86_64.rpm`)} |`,
-              `| Linux Fedora / openSUSE / RHEL (ARM64) | ${fileLink(`Extreme InfiniTV-${version}-1.aarch64.rpm`)} |`,
-              `| Linux portable (any distro) | ${fileLink(`Extreme InfiniTV_${version}_amd64.AppImage`)} |`,
-              `| Linux portable (ARM64, any distro) | ${fileLink(`Extreme InfiniTV_${version}_aarch64.AppImage`)} |`,
-              `| Android sideload (APK) | ${fileLink(`Extreme InfiniTV_${version}.apk`)} |`,
+              `| Windows 10/11 (recommended installer) | ${fileLink(`DREYHOUSE PLAYER_${version}_x64-setup.exe`)} |`,
+              `| Windows on ARM (Snapdragon laptops) | ${fileLink(`DREYHOUSE PLAYER_${version}_arm64-setup.exe`)} |`,
+              `| Windows (MSI alternative) | ${fileLink(`DREYHOUSE PLAYER_${version}_x64_en-US.msi`)} |`,
+              `| macOS (Apple Silicon + Intel) | ${fileLink(`DREYHOUSE PLAYER_${version}_universal.dmg`)} |`,
+              `| Linux Snap (most distros) | [Snap Store](https://snapcraft.io/dreyhouse-player) or \`sudo snap install dreyhouse-player\` |`,
+              `| Linux Debian / Ubuntu / Mint | ${fileLink(`DREYHOUSE PLAYER_${version}_amd64.deb`)} |`,
+              `| Linux ARM64 - Raspberry Pi 4/5 (64-bit OS), Debian / Ubuntu | ${fileLink(`DREYHOUSE PLAYER_${version}_arm64.deb`)} |`,
+              `| Linux Fedora / openSUSE / RHEL | ${fileLink(`DREYHOUSE PLAYER-${version}-1.x86_64.rpm`)} |`,
+              `| Linux Fedora / openSUSE / RHEL (ARM64) | ${fileLink(`DREYHOUSE PLAYER-${version}-1.aarch64.rpm`)} |`,
+              `| Linux portable (any distro) | ${fileLink(`DREYHOUSE PLAYER_${version}_amd64.AppImage`)} |`,
+              `| Linux portable (ARM64, any distro) | ${fileLink(`DREYHOUSE PLAYER_${version}_aarch64.AppImage`)} |`,
+              `| Android sideload (APK) | ${fileLink(`DREYHOUSE PLAYER_${version}.apk`)} |`,
               '',
               '<details><summary>What about the <code>.sig</code> files, <code>latest.json</code> and the macOS <code>.app.tar.gz</code>?</summary>',
               '',
               'You can ignore them.',
               '',
               '- `*.sig` and `latest.json` are used by the built-in auto-updater to verify each download is genuinely signed. The app downloads them on its own when checking for updates.',
-              '- `Extreme InfiniTV_universal.app.tar.gz` is the macOS update bundle consumed by the same updater. For a fresh install on macOS, use the `.dmg` instead.',
+              '- `DREYHOUSE PLAYER_universal.app.tar.gz` is the macOS update bundle consumed by the same updater. For a fresh install on macOS, use the `.dmg` instead.',
               '',
               '</details>',
               '',
-              '<details><summary>macOS: "Extreme InfiniTV.app" cannot be opened / "Apple could not verify..."</summary>',
+              '<details><summary>macOS: "DREYHOUSE PLAYER.app" cannot be opened / "Apple could not verify..."</summary>',
               '',
               'The macOS build is not yet notarized by Apple, so Gatekeeper blocks it on first launch. After dragging the app from the `.dmg` into `/Applications`, remove the quarantine flag from a Terminal:',
               '',
               '```bash',
-              'xattr -dr com.apple.quarantine "/Applications/Extreme InfiniTV.app"',
+              'xattr -dr com.apple.quarantine "/Applications/DREYHOUSE PLAYER.app"',
               '```',
               '',
               'Then open the app normally. You only need to do this once per install.',
@@ -375,23 +375,18 @@ jobs:
               '</details>',
               '',
               '</details>',
-              '',
-              '<a href="https://play.google.com/store/apps/details?id=com.infinitel8p.xtream">',
-              '<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="60"/>',
-              '</a>',
-              '',
-              '[![Get it from Microsoft](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/store/detail/9NN162Z0WXSR)',
-              '',
-              '<a href="https://snapcraft.io/extreme-infinitv">',
-              '<img alt="Get it from the Snap Store" src="https://snapcraft.io/en/dark/install.svg" height="60"/>',
-              '</a>',
+              // Microsoft Store / Google Play / Snap Store badges intentionally
+              // omitted: no store listing exists for this fork yet (the
+              // originals belonged to the upstream project's own developer
+              // accounts). Add them back here once you've published your own -
+              // see docs/BRANDING.md ("App store listings").
             ].join('\n')
 
             // Downloads go above the changelog so they stay visible before
             // GitHub's "read more" fold on long release notes.
             const body = [
               '<p align="center">',
-              '  <img src="https://raw.githubusercontent.com/infinitel8p/Extreme-InfiniTV/refs/heads/main/src-tauri/icons/logos/readme-lockup-2x.png" alt="Extreme InfiniTV logo" width="400"/>',
+              '  <img src="https://raw.githubusercontent.com/MIKE02jo/dreyhouse_player/refs/heads/main/src-tauri/icons/logos/readme-lockup-2x.png" alt="DREYHOUSE PLAYER logo" width="400"/>',
               '</p>',
               '',
               ...(summary ? [`<p align="center">${summary}</p>`, ''] : []),
@@ -405,7 +400,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: tag,
-              name: `Extreme InfiniTV ${tag}`,
+              name: `DREYHOUSE PLAYER ${tag}`,
               body,
               draft: true,
               prerelease: tag.includes("-"),
@@ -638,8 +633,8 @@ jobs:
             find src-tauri/gen/android/app/build/outputs -type f
             exit 1
           fi
-          cp "$AAB" "$OUT/Extreme InfiniTV_${VERSION}.aab"
-          cp "$APK" "$OUT/Extreme InfiniTV_${VERSION}.apk"
+          cp "$AAB" "$OUT/DREYHOUSE PLAYER_${VERSION}.aab"
+          cp "$APK" "$OUT/DREYHOUSE PLAYER_${VERSION}.apk"
           echo "out=$OUT" >> "$GITHUB_OUTPUT"
 
       # The AAB never touches the release - Play publishing reads it from here.
@@ -674,7 +669,7 @@ jobs:
       #       find src-tauri/gen/android/app/build/outputs/bundle -type f
       #       exit 1
       #     fi
-      #     cp "$TV_AAB" "$OUT/Extreme InfiniTV_${VERSION}_tv.aab"
+      #     cp "$TV_AAB" "$OUT/DREYHOUSE PLAYER_${VERSION}_tv.aab"
 
       - name: Upload to release
         env:
@@ -725,7 +720,7 @@ jobs:
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: com.infinitel8p.xtream
+          packageName: com.dreyhouse.player
           releaseFiles: ${{ steps.locate.outputs.aab }}
           track: production
           status: completed
@@ -775,7 +770,7 @@ jobs:
               --sellerId "$MSSTORE_SELLER_ID" \
               --clientId "$MSSTORE_CLIENT_ID" \
               --clientSecret "$MSSTORE_CLIENT_SECRET"
-            msstore publish "$MSIX" -id 9NN162Z0WXSR
+            msstore publish "$MSIX" -id "${MSSTORE_PRODUCT_ID:?Set MSSTORE_PRODUCT_ID once this app is registered in Partner Center - see docs/BRANDING.md}"
           '
 
   # contents:write needed to download an asset off the still-draft release.

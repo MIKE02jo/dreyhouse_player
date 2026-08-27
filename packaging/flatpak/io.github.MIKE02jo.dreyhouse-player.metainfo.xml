@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DREYHOUSE PLAYER - a rebrand/fork of Extreme InfiniTV (c) 2025 Ludovico Ferrara -->
+<component type="desktop-application">
+  <id>io.github.MIKE02jo.dreyhouse-player</id>
+  <name>DREYHOUSE PLAYER</name>
+  <summary>Stream live TV, movies and series</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="io.github.MIKE02jo">
+    <name>MIKE02jo</name>
+  </developer>
+  <description>
+    <p>
+      DREYHOUSE PLAYER is a cross-platform IPTV player for Xtream Codes
+      providers and plain M3U or M3U8 playlists. Sign in with Xtream Codes
+      credentials, paste a playlist URL, or load a playlist file, and the
+      app detects the source automatically.
+    </p>
+    <p>
+      Watch live TV with category filtering, channel search, and an inline
+      programme guide showing what is on now and next. Replay programmes
+      from your provider's catch-up archive, pause and rewind behind live,
+      or seek anywhere in a full-day schedule grid. Browse movies and
+      series in poster grids with detail pages, seasons, and episodes, and
+      download them for offline playback.
+    </p>
+    <p>
+      Build custom playlists in a dedicated editor that pulls channels
+      from any of your existing sources, or add a stream straight from a
+      website by pasting its page URL. Embedded subtitles and audio-track
+      switching are available for movies and series, and live channels
+      with audio codecs the built-in player cannot decode are repaired
+      automatically on desktop.
+    </p>
+    <ul>
+      <li>Xtream Codes and M3U/M3U8 playlists in one interface</li>
+      <li>Live TV with electronic programme guide and catch-up/replay</li>
+      <li>Movies and series library with offline downloads</li>
+      <li>Custom playlists built from your existing sources</li>
+      <li>Add a stream directly from any website</li>
+      <li>Embedded subtitles and audio-track switching</li>
+      <li>Keyboard, mouse, and D-pad navigation throughout</li>
+      <li>16 languages including right-to-left layouts</li>
+      <li>Light and dark themes with adjustable accent color</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.MIKE02jo.dreyhouse-player.desktop</launchable>
+  <branding>
+    <color type="primary" scheme_preference="light">#3DD695</color>
+    <color type="primary" scheme_preference="dark">#00935B</color>
+  </branding>
+  <url type="homepage">https://github.com/MIKE02jo/dreyhouse_player</url>
+  <url type="bugtracker">https://github.com/MIKE02jo/dreyhouse_player/issues</url>
+  <url type="vcs-browser">https://github.com/MIKE02jo/dreyhouse_player</url>
+  <!--
+    Screenshots and the <releases> history intentionally omitted: the
+    originals were of Extreme InfiniTV's UI/releases, which no longer match
+    this fork's rebranded interface and version numbering. Add DREYHOUSE
+    PLAYER's own screenshots (docs/screenshots/) and release entries here
+    once a v1.0.0 build exists.
+  -->
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+    <control>tv-remote</control>
+  </supports>
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <content_rating type="oars-1.1" />
+</component>

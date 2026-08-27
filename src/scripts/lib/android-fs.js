@@ -4,7 +4,7 @@ const isAndroid =
   typeof navigator !== "undefined" &&
   /Android/i.test(navigator.userAgent || "")
 
-const PUBLIC_SUBDIR = "Extreme InfiniTV"
+const PUBLIC_SUBDIR = "DREYHOUSE PLAYER"
 
 let modPromise = null
 async function mod() {
@@ -291,7 +291,7 @@ export async function saveJsonFile(defaultFileName, text) {
 }
 
 /**
- * Drop a binary file directly into the public Downloads/Extreme InfiniTV/
+ * Drop a binary file directly into the public Downloads/DREYHOUSE PLAYER/
  * folder via MediaStore. No picker UI - used as a fallback when the SAF
  * "Save As" picker is unavailable on the device.
  *
@@ -330,7 +330,7 @@ export async function savePublicBinaryFile(filename, bytes, mime = "application/
 }
 
 /**
- * Drop a text file directly into the public Downloads/Extreme InfiniTV/
+ * Drop a text file directly into the public Downloads/DREYHOUSE PLAYER/
  * folder via MediaStore. No picker UI - used as a fallback when the SAF
  * "Save As" picker is unavailable on the device.
  *

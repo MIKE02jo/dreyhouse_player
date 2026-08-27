@@ -1,4 +1,4 @@
-package com.infinitel8p.xtream
+package com.dreyhouse.player
 
 import android.content.Context
 import android.os.Bundle
