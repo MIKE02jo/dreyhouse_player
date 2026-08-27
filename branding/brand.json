@@ -11,13 +11,13 @@
   },
   "version": "1.0.0",
   "colors": {
-    "primary": "#00B871",
-    "primaryDark": "#00935B",
-    "primaryLight": "#3DD695",
+    "primary": "#00BF63",
+    "primaryDark": "#269251",
+    "primaryLight": "#5BD484",
     "background": "#0b0f14",
     "surface": "#11161c",
     "surfaceAlt": "#161c24",
-    "accent": "#00B871",
+    "accent": "#00BF63",
     "textOnPrimary": "#04120b"
   },
   "urls": {

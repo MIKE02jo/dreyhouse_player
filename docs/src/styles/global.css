@@ -21,9 +21,9 @@
   --color-fg-3: light-dark(oklch(0.46 0.013 255), oklch(0.66 0.011 250));
 
   /* accent: DREYHOUSE PLAYER emerald, used sparingly. Light value tuned to pass AA on body text. */
-  --color-accent:      light-dark(oklch(0.46 0.19 160), oklch(0.78 0.13 160));
-  --color-accent-soft: light-dark(oklch(0.46 0.19 160 / 0.08), oklch(0.78 0.13 160 / 0.14));
-  --color-accent-ring: light-dark(oklch(0.46 0.19 160 / 0.32), oklch(0.78 0.13 160 / 0.32));
+  --color-accent:      light-dark(oklch(0.46 0.19 152), oklch(0.78 0.13 152));
+  --color-accent-soft: light-dark(oklch(0.46 0.19 152 / 0.08), oklch(0.78 0.13 152 / 0.14));
+  --color-accent-ring: light-dark(oklch(0.46 0.19 152 / 0.32), oklch(0.78 0.13 152 / 0.32));
 
   /* semantic states. Light values deep enough to read as text on near-white (AA). */
   --color-ok:        light-dark(oklch(0.42 0.11 160), oklch(0.79 0.11 160));

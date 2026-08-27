@@ -46,8 +46,8 @@
   </description>
   <launchable type="desktop-id">io.github.MIKE02jo.dreyhouse-player.desktop</launchable>
   <branding>
-    <color type="primary" scheme_preference="light">#3DD695</color>
-    <color type="primary" scheme_preference="dark">#00935B</color>
+    <color type="primary" scheme_preference="light">#5BD484</color>
+    <color type="primary" scheme_preference="dark">#269251</color>
   </branding>
   <url type="homepage">https://github.com/MIKE02jo/dreyhouse_player</url>
   <url type="bugtracker">https://github.com/MIKE02jo/dreyhouse_player/issues</url>

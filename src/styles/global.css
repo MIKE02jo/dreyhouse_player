@@ -124,9 +124,9 @@ html.xt-theme-switching::view-transition-new(root) {
     --color-fg-2: light-dark(oklch(0.4   0.028 var(--xt-tint-hue)), oklch(0.78  0.011 250));
     --color-fg-3: light-dark(oklch(0.45  0.026 var(--xt-tint-hue)), oklch(0.6   0.011 250));
 
-    /* - accent: DREYHOUSE PLAYER emerald (brand green ~#00B871, oklch hue 160) - */
-    --color-accent:      light-dark(oklch(0.50 0.20 160), oklch(0.78 0.15 160));
-    --color-accent-soft: light-dark(oklch(0.50 0.20 160 / 0.12), oklch(0.78 0.15 160 / 0.18));
+    /* - accent: DREYHOUSE PLAYER emerald (brand green #00BF63, oklch hue 152) - */
+    --color-accent:      light-dark(oklch(0.50 0.20 152), oklch(0.78 0.15 152));
+    --color-accent-soft: light-dark(oklch(0.50 0.20 152 / 0.12), oklch(0.78 0.15 152 / 0.18));
 
     /* - semantic states - */
     --color-ok:   light-dark(oklch(0.5  0.12 160), oklch(0.79 0.13 160));
@@ -154,8 +154,8 @@ html.xt-theme-switching::view-transition-new(root) {
    explicit [data-accent] override, so the un-set state (no data-accent
    attribute) already renders on-brand. */
 :root {
-    --xt-tint-hue: 160;
-    --accent-swatch-emerald: light-dark(oklch(0.50 0.20 160), oklch(0.78 0.15 160));
+    --xt-tint-hue: 152;
+    --accent-swatch-emerald: light-dark(oklch(0.50 0.20 152), oklch(0.78 0.15 152));
     --accent-swatch-rose:    light-dark(oklch(0.50 0.20 20 ), oklch(0.78 0.15 20 ));
     --accent-swatch-ember:   light-dark(oklch(0.50 0.20 55 ), oklch(0.78 0.15 55 ));
     --accent-swatch-cyan:    light-dark(oklch(0.50 0.20 210), oklch(0.78 0.15 210));
