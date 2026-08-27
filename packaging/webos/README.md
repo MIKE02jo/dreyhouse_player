@@ -1,9 +1,24 @@
 # DREYHOUSE PLAYER — LG webOS packaging
 
-Starting point for an LG webOS TV app, **not a finished/verified app**. See
-the chat history (or ask MIKE02jo) for why: no webOS SDK, emulator, or real
-LG TV exists in the environment this was prepared in, so none of this has
-actually been launched on webOS yet.
+Starting point for an LG webOS TV app - the package itself is verified,
+but **the app has never actually run on webOS**. See "What's verified" vs.
+"What still needs a real device/emulator" below.
+
+## What's verified (no webOS SDK/emulator/device needed for this part)
+
+- `ares-package` (LG's own official CLI, installed via npm here) accepts
+  the staged output and produces a real, structurally valid `.ipk` -
+  `ares-package -c` reports "no problems detected".
+- A smoke test serving the staged build over plain HTTP and loading it in
+  headless Chromium renders the app's title and content with no fatal
+  errors. (Chromium isn't webOS's actual WebKit engine, so this doesn't
+  prove it runs correctly on a real TV - see below - but it does confirm
+  the static build itself isn't broken.)
+- Found and fixed one real packaging bug in the process: `ares-package`'s
+  bundled minifier (an old uglify-js) can't parse the modern ES2020+/ESM
+  syntax Vite/Rolldown already emit, and failed with "Failed to minify
+  code" on some chunks. `build.sh` now passes `--no-minify` (the build is
+  already minified, so nothing is lost).
 
 ## Same design, no rebuild needed
 

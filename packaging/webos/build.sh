@@ -43,7 +43,11 @@ cp packaging/webos/largeIcon.png "$STAGE/"
 
 if command -v ares-package >/dev/null 2>&1; then
   echo "==> ares-package found, building .ipk"
-  ares-package "$STAGE" -o "$OUT"
+  # --no-minify: ares-package's bundled uglify-js can't parse the modern
+  # (ES2020+/ESM) syntax Vite/Rolldown already emits, and fails with
+  # "Failed to minify code" on some chunks. The build is already minified,
+  # so double-minifying isn't needed anyway.
+  ares-package --no-minify "$STAGE" -o "$OUT"
   echo "==> Done. Install with: ares-install -d <device-name> $OUT/*.ipk"
 else
   echo "==> ares-package not found (LG webOS TV SDK not installed here)."
