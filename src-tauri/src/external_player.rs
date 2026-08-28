@@ -564,6 +564,65 @@ fn pid_alive(pid: u32) -> bool {
 }
 
 // ---------------------------------------------------------------------------
+// App-exit teardown
+// ---------------------------------------------------------------------------
+#[cfg(unix)]
+fn kill_pid(pid: u32) {
+    extern "C" {
+        fn kill(pid: i32, sig: i32) -> i32;
+    }
+    if pid == 0 {
+        return;
+    }
+    unsafe {
+        kill(pid as i32, 15); // SIGTERM
+    }
+}
+
+#[cfg(windows)]
+fn kill_pid(pid: u32) {
+    use std::ffi::c_void;
+    type Handle = *mut c_void;
+    const PROCESS_TERMINATE: u32 = 0x0001;
+    extern "system" {
+        fn OpenProcess(dwDesiredAccess: u32, bInheritHandle: i32, dwProcessId: u32) -> Handle;
+        fn TerminateProcess(hProcess: Handle, uExitCode: u32) -> i32;
+        fn CloseHandle(hObject: Handle) -> i32;
+    }
+    if pid == 0 {
+        return;
+    }
+    unsafe {
+        let handle = OpenProcess(PROCESS_TERMINATE, 0, pid);
+        if handle.is_null() {
+            return;
+        }
+        TerminateProcess(handle, 0);
+        CloseHandle(handle);
+    }
+}
+
+/// Best-effort: kill any mpv/vlc process we're still tracking a PID for.
+/// Tauri exit paths (tray Quit, window-close-to-quit) don't run Drop for
+/// state behind Arcs, so this must be called explicitly from `RunEvent::Exit`
+/// - same pattern as `audio_proxy::shutdown` / `vod_audio_proxy::shutdown`.
+/// Without this, an mpv/vlc window launched via the external-player backend
+/// keeps playing (and making noise) after the app itself has fully quit,
+/// since it's spawned detached and nothing else ever asks it to close.
+pub fn shutdown(state: &ExternalPlayerState) {
+    let pids: Vec<u32> = {
+        let guard = state
+            .inner
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
+        guard.values().map(|slot| slot.pid).collect()
+    };
+    for pid in pids {
+        kill_pid(pid);
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Exit watcher
 // ---------------------------------------------------------------------------
 /// Polls `pid` and emits `xt:external-player-exited` when the player dies.

@@ -264,6 +264,7 @@ pub fn run() {
             use tauri::Manager;
             audio_proxy::shutdown(&_app_handle.state::<audio_proxy::AudioProxyState>());
             vod_audio_proxy::shutdown(&_app_handle.state::<vod_audio_proxy::VodAudioProxyState>());
+            external_player::shutdown(&_app_handle.state::<external_player::ExternalPlayerState>());
         }
     });
 }
