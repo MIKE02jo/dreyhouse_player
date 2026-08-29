@@ -1,7 +1,7 @@
 {
   "productName": "DREYHOUSE PLAYER",
   "mainBinaryName": "dreyhouse-player",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "identifier": "com.dreyhouse.player",
   "build": {
     "frontendDist": "../dist",
@@ -50,7 +50,7 @@
     "copyright": "© 2026 DREYHOUSE PLAYER",
     "createUpdaterArtifacts": true,
     "android": {
-      "versionCode": 100000190
+      "versionCode": 100000290
     },
     "icon": [
       "icons/32x32.png",
