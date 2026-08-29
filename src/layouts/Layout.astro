@@ -775,7 +775,6 @@ const isHome = Astro.url.pathname.replace(/\/$/, "") === ""
   import { initI18n } from "@/scripts/lib/i18n.js"
   import { initConnectivity } from "@/scripts/lib/connectivity.js"
   import { initTrayHandler } from "@/scripts/lib/tray-handler"
-  import { initWhatsNew } from "@/scripts/lib/whats-new"
   import { mountCompositingTrialPrompt } from "@/scripts/lib/compositing"
   import { initUiSounds } from "@/scripts/lib/ui-sounds"
   import { initHaptics } from "@/scripts/lib/haptics"
@@ -900,7 +899,10 @@ const isHome = Astro.url.pathname.replace(/\/$/, "") === ""
   initFocusGlide()
   initKeyboardHelp()
   initTrayHandler()
-  initWhatsNew()
+  // "What's new" release-notes dialog disabled: this app ships internal
+  // fixes far more often than the changelog dialog's one-per-version-bump
+  // design assumes, and the audience is non-technical IPTV subscribers who
+  // don't need developer-facing release notes surfacing on every update.
   mountCompositingTrialPrompt()
 
   // -----------------------------------------------------------------------

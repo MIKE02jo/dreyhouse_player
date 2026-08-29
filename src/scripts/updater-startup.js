@@ -6,24 +6,19 @@
 // excluded too - an NSIS installer must not be applied over an MSIX install.
 // macOS is excluded until signing + notarization are set up.
 //
-// Everywhere else (web, Android, macOS, MS Store), a GitHub-release check
-// runs instead and surfaces a one-toast-per-version notification pointing
-// people at Settings > About. Snap/Flatpak skip this file entirely: their
-// store owns updates, and Flathub flags a reachable self-update path.
+// Everywhere else (web, Android, macOS, MS Store) this is a no-op: there
+// used to be a one-toast-per-version "update available" notice here, but
+// this app ships internal fixes far more often than that was designed for,
+// and its non-technical customer audience doesn't need a developer-facing
+// update notice popping up on every visit. Snap/Flatpak skip this file
+// entirely: their store owns updates, and Flathub flags a reachable
+// self-update path.
 import { log } from "@/scripts/lib/log.js"
-import {
-    checkForUpdate,
-    isStoreBuild,
-    resolveUpdateFeedUrl,
-    withUpdaterRetry,
-} from "@/scripts/lib/update-check.js"
+import { isStoreBuild, resolveUpdateFeedUrl, withUpdaterRetry } from "@/scripts/lib/update-check.js"
 import { sandboxRuntime } from "@/scripts/lib/sandbox.ts"
 import { getUpdateChannel, getAutoUpdateEnabled } from "@/scripts/lib/app-settings.js"
-import { toast } from "@/scripts/lib/toast.js"
-import { t } from "@/scripts/lib/i18n.js"
 
 const SESSION_FLAG = "xt_updater_checked"
-const NOTIFIED_VERSION_KEY = "xt_update_notified"
 
 let isTauri = false
 try {
@@ -48,20 +43,6 @@ function markSessionChecked() {
     } catch {
         return true
     }
-}
-
-function readNotifiedVersion() {
-    try {
-        return localStorage.getItem(NOTIFIED_VERSION_KEY)
-    } catch {
-        return null
-    }
-}
-
-function writeNotifiedVersion(version) {
-    try {
-        localStorage.setItem(NOTIFIED_VERSION_KEY, version)
-    } catch {}
 }
 
 async function runBetaAutoUpdate() {
@@ -94,36 +75,15 @@ async function runAutoUpdate() {
     }
 }
 
-async function notifyIfUpdateAvailable() {
-    const status = await checkForUpdate()
-    if (!status?.updateAvailable) return
-    if (readNotifiedVersion() === status.latest) return
-    writeNotifiedVersion(status.latest)
-    toast({
-        title: t("settings.about.updateAvailable", { version: status.latestTag }),
-        description: t("update.openAboutHint"),
-        duration: 8000,
-    })
-}
-
 async function maybeRunAutoUpdate() {
     if (!markSessionChecked()) return
     if (await sandboxRuntime()) return
-
-    if (isAutoUpdatePlatform() && !(await isStoreBuild())) {
-        if (!getAutoUpdateEnabled()) return
-        try {
-            await runAutoUpdate()
-            return
-        } catch (err) {
-            log.error("Updater error, falling back to notify check:", err)
-        }
-    }
-
+    if (!isAutoUpdatePlatform() || (await isStoreBuild())) return
+    if (!getAutoUpdateEnabled()) return
     try {
-        await notifyIfUpdateAvailable()
+        await runAutoUpdate()
     } catch (err) {
-        log.error("Update notify check failed:", err)
+        log.error("Updater error:", err)
     }
 }
 

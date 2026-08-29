@@ -54,21 +54,6 @@ import {
 			<WelcomeCard />
 		</section>
 
-		<a
-			id="hub-account-switcher"
-			href="/settings#settings-playlists"
-			aria-label="Switch account"
-			data-i18n-attr="aria-label:playlist.switch"
-			class="shrink-0 self-center sm:self-start inline-flex items-center gap-2.5 px-2.5 py-2.5 min-h-11 max-w-full
-				rounded-xl border border-line bg-surface text-sm font-medium text-fg
-				transition-colors hover:bg-surface-2 focus-visible:bg-surface-2 focus-visible:border-accent
-				outline-none">
-			<span
-				id="hub-account-badge"
-				class="h-5 min-w-5 px-1.5 inline-flex items-center justify-center rounded-md font-semibold text-fg-2 shrink-0 ring-1 ring-line text-label uppercase"></span>
-			<span id="hub-account-title" class="truncate tracking-tight text-fg-3"></span>
-		</a>
-
 		<nav
 			id="hub-tiles"
 			aria-label="Browse" data-i18n-attr="aria-label:aria.browse"
@@ -244,6 +229,21 @@ import {
 				<span data-i18n="nav.settings" class="text-sm font-medium text-fg-2 group-hover:text-fg">Settings</span>
 			</a>
 		</nav>
+
+		<a
+			id="hub-account-switcher"
+			href="/settings#settings-playlists"
+			aria-label="Switch account"
+			data-i18n-attr="aria-label:playlist.switch"
+			class="shrink-0 self-center sm:self-start inline-flex items-center gap-2.5 px-2.5 py-2.5 min-h-11 max-w-full
+				rounded-xl border border-line bg-surface text-sm font-medium text-fg
+				transition-colors hover:bg-surface-2 focus-visible:bg-surface-2 focus-visible:border-accent
+				outline-none">
+			<span
+				id="hub-account-badge"
+				class="h-5 min-w-5 px-1.5 inline-flex items-center justify-center rounded-md font-semibold text-fg-2 shrink-0 ring-1 ring-line text-label uppercase"></span>
+			<span id="hub-account-title" class="truncate tracking-tight text-fg-3"></span>
+		</a>
 
 		<HubStrips client:load />
 	</main>
