@@ -426,6 +426,12 @@ import {
 		const entries = await getEntries();
 		const hasEntries = entries.length > 0;
 		document.documentElement.toggleAttribute("data-first-run", !hasEntries);
+		// Just the grid on this screen once a playlist is loaded - the mobile
+		// bottom tab bar would only duplicate Live TV/Movies/Series that are
+		// already right there as tiles. It's back as soon as you navigate
+		// into any of those (Layout.astro renders it per-page, this toggle
+		// only ever touches this one page's own instance of it).
+		document.querySelector("[data-mobile-nav]")?.toggleAttribute("hidden", hasEntries);
 		return hasEntries;
 	}
 
