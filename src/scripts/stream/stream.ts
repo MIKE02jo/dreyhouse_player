@@ -146,7 +146,10 @@ import { attachPlayerInsights } from "@/scripts/lib/player-stats.ts"
 import { isAutomaticRetuneReason } from "@/scripts/lib/stream-health.ts"
 import { attachQualityChip } from "@/scripts/lib/quality-badge.ts"
 
-const CHANNELS_TTL_MS = 24 * 60 * 60 * 1000
+// Channels are downloaded once and stay cached forever - the only thing that
+// re-fetches them is an explicit "refresh playlist" (which bypasses the
+// cache via `{ force: true }`), never a silent background TTL expiry.
+const CHANNELS_TTL_MS = Infinity
 // One "page" of the side EPG panel's past window; the "Load earlier" button loads another, up to a 7-day cap.
 const EPG_SIDE_PANEL_PAST_WINDOW_MS = 24 * 60 * 60 * 1000
 const EPG_SIDE_PANEL_MAX_PAST_DAYS = 7

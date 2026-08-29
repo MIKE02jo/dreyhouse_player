@@ -40,9 +40,14 @@ import { t } from "@/scripts/lib/i18n.js"
 import { retryWithBackoff, HttpRetryError } from "@/scripts/lib/retry.ts"
 import { log } from "@/scripts/lib/log.js"
 
-export const CHANNELS_TTL_MS = 24 * 60 * 60 * 1000
-export const VOD_TTL_MS = 24 * 60 * 60 * 1000
-export const SERIES_TTL_MS = 24 * 60 * 60 * 1000
+// The catalog (live channels, movies, series) is downloaded once and stays
+// cached forever - re-entering a section after it's already warm must never
+// silently kick off a fresh download. The only thing that invalidates this
+// cache is an explicit "refresh playlist" action, which bypasses the TTL
+// check entirely via `{ force: true }` (see refreshActive() in creds.js).
+export const CHANNELS_TTL_MS = Infinity
+export const VOD_TTL_MS = Infinity
+export const SERIES_TTL_MS = Infinity
 
 const EVT_WARMED = "xt:catalog-warmed"
 const EVT_WARMING_START = "xt:catalog-warming-start"

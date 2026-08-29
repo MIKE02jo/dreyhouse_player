@@ -71,7 +71,10 @@ import {
   personFilterGridSignature,
 } from "@/scripts/lib/grid-view.ts"
 
-const SERIES_TTL_MS = 24 * 60 * 60 * 1000
+// Series are downloaded once and stay cached forever - the only thing that
+// re-fetches them is an explicit "refresh playlist" (which bypasses the
+// cache via `{ force: true }`), never a silent background TTL expiry.
+const SERIES_TTL_MS = Infinity
 
 if (typeof history !== "undefined") history.scrollRestoration = "manual"
 
