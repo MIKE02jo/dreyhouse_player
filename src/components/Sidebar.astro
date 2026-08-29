@@ -523,14 +523,6 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   import { toastSuccess, toastError, toastWarn } from "@/scripts/lib/toast.js"
   import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js"
   import { bindGatedLinks } from "@/scripts/lib/catalog-gate.ts"
-  import { startActivationRevalidationLoop } from "@/scripts/lib/activation-revalidate.ts"
-
-  // Present on every content page (unlike index.astro's own script), so a
-  // seller revoking a device-activated account takes effect quickly no
-  // matter where the customer currently is in the app, not only when they
-  // happen to be back on the home hub. Idempotent against index.astro's own
-  // call to the same starter.
-  startActivationRevalidationLoop()
 
   // Tap-to-download (see catalog-gate.ts): Live TV/Movies/Series don't fetch
   // anything until tapped, and each fetches independently now - only the
@@ -765,6 +757,18 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
 </script>
 
 <style>
+  /* Before activation, the home page shows only the "Activate with a
+     code" screen (index.astro's own #welcome/data-first-run CSS handles
+     that part) - but this rail/bottom-nav lives outside index.astro's own
+     template, in Layout.astro, so it was never covered by that rule and
+     stayed clickable (Settings, Favorites, ...) even pre-activation. Since
+     Sidebar only renders on the home route at all now, this only ever
+     matters there. */
+  html[data-first-run="true"] .sidebar-rail,
+  html[data-first-run="true"] [data-mobile-nav] {
+    display: none !important;
+  }
+
   /* Override the global focus-visible outline (Layout.astro paints an
      accent rectangle around any focused <a>). The glyph's own brightening
      handles focus indication. */

@@ -159,6 +159,7 @@
   "strip.viewAll": "Voir tout",
   "strip.itemCount": "{count} éléments",
   "common.back": "Retour",
+  "common.backToHome": "Accueil",
   "activate.title": "Activer avec un code",
   "activate.subtitle": "Communiquez ce code à votre vendeur. Une fois activé, votre abonnement se charge ici automatiquement.",
   "activate.codeLabel": "Votre code d'appareil",

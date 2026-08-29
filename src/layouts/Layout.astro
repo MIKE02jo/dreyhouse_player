@@ -1,4 +1,5 @@
 ---
+import { IconArrowLeft } from "@tabler/icons-svelte"
 import Sidebar from "@/components/Sidebar.astro"
 import TitleBar from "@/components/TitleBar.astro"
 import WindowResizeEdges from "@/components/WindowResizeEdges.astro"
@@ -14,6 +15,15 @@ const { pageTitle, showVersion = true } = Astro.props
 const documentTitle = pageTitle
   ? `${pageTitle} | DREYHOUSE PLAYER`
   : "DREYHOUSE PLAYER"
+
+// The rail/bottom-nav only ever shows on the home hub now - every other
+// page (Live TV, Movies, Series, Settings, EPG, ...) is that one section
+// and nothing else, matching IPTV Smarters Pro's model this was built
+// after. Losing the sidebar there would also lose the only way back to the
+// hub, so every other page gets one small back-to-home control instead
+// (see the isHome branch below) rather than each page having to add its
+// own.
+const isHome = Astro.url.pathname.replace(/\/$/, "") === ""
 ---
 
 <!doctype html>
@@ -312,11 +322,26 @@ const documentTitle = pageTitle
     <div
       class="flex-1 min-h-0 flex flex-col md:flex-row landscape-phone:flex-row"
     >
-      <Sidebar />
+      {isHome && <Sidebar />}
       <div
         class="flex-1 min-w-0 min-h-0 flex flex-col order-first md:order-0
                 overflow-x-clip overflow-y-auto"
       >
+        {!isHome && (
+          <a
+            href="/"
+            data-i18n-attr="aria-label:common.backToHome"
+            aria-label="Back to home"
+            class="xt-back-home sticky top-0 z-20 inline-flex w-fit items-center gap-1.5
+                   m-2 px-3 py-2 rounded-full min-h-10
+                   bg-bg/85 backdrop-blur-sm border border-line text-sm text-fg-2
+                   hover:text-fg hover:bg-surface-2 focus-visible:bg-surface-2
+                   focus-visible:border-accent outline-none transition-colors
+                   pl-[max(0.75rem,env(safe-area-inset-left))]">
+            <IconArrowLeft class="size-4 shrink-0" aria-hidden="true" />
+            <span data-i18n="common.backToHome">Home</span>
+          </a>
+        )}
         <slot />
       </div>
     </div>
@@ -332,7 +357,12 @@ const documentTitle = pageTitle
     }
     <script>
       import { injectVersion } from "@/scripts/version.js"
+      import { startActivationRevalidationLoop } from "@/scripts/lib/activation-revalidate.ts"
       injectVersion()
+      // Was started from Sidebar.astro, which now only renders on the home
+      // hub - moved here so it keeps running on every page regardless
+      // (idempotent, so home doesn't double-start it).
+      startActivationRevalidationLoop()
     </script>
     <CatalogWarmingIndicator client:idle />
   </body>

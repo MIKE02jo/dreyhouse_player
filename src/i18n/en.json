@@ -159,6 +159,7 @@
   "strip.viewAll": "View all",
   "strip.itemCount": "{count} items",
   "common.back": "Back",
+  "common.backToHome": "Home",
   "activate.title": "Activate with a code",
   "activate.subtitle": "Give this code to your provider. Once they activate it, your subscription loads here automatically.",
   "activate.codeLabel": "Your device code",
