@@ -1,7 +1,7 @@
 {
   "name": "dreyhouse-player",
   "type": "module",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "license": "GPL-3.0-or-later",
   "packageManager": "pnpm@10.31.0",
   "scripts": {
