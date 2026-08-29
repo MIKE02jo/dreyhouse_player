@@ -1,0 +1,235 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { IconArrowLeft, IconCopy, IconRefresh } from "@tabler/icons-svelte";
+---
+
+<Layout pageTitle="Activate with a code" showVersion={false}>
+	<main
+		class="mx-auto px-5 sm:px-6 lg:px-8 pb-16 pt-4 lg:pt-6 max-w-480 w-full">
+
+		<div>
+
+		<header class="route-hero mb-10">
+			<a
+				href="/"
+				class="self-start inline-flex items-center gap-1.5 text-sm text-fg-3 hover:text-fg focus-visible:text-fg transition-colors min-h-10 -ml-1 mb-2">
+				<IconArrowLeft class="h-4 w-4" /> <span data-i18n="common.back">Back</span>
+			</a>
+			<h1
+				id="page-title"
+				data-i18n="activate.title"
+				class="route-hero__title">
+				Activate with a code
+			</h1>
+			<p
+				id="page-subtitle"
+				data-i18n="activate.subtitle"
+				class="route-hero__sub">
+				Give this code to your provider. Once they activate it, your
+				subscription loads here automatically.
+			</p>
+		</header>
+
+		<div class="flex flex-col gap-6">
+
+			<!-- Device code -->
+			<div class="rounded-xl border border-line bg-surface px-4 py-4 flex flex-col items-center gap-3 text-center">
+				<span data-i18n="activate.codeLabel" class="text-label font-medium uppercase tracking-wider text-fg-3">
+					Your device code
+				</span>
+				<div class="flex items-center gap-2">
+					<code id="device-code" class="text-2xl sm:text-3xl font-mono tracking-wider text-accent select-all">
+						----:----:----
+					</code>
+					<button
+						id="copy-code-btn"
+						type="button"
+						data-i18n-attr="aria-label:activate.copyAria"
+						aria-label="Copy code"
+						class="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-line bg-bg text-fg-2
+							hover:bg-surface-2 hover:text-fg focus-visible:bg-surface-2 focus-visible:border-accent transition-colors
+							outline-none focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2">
+						<IconCopy class="h-4 w-4" aria-hidden="true" />
+					</button>
+				</div>
+				<p data-i18n="activate.codeHelper" class="text-xs text-fg-3 leading-relaxed max-w-sm">
+					This code identifies only this app install. It does not contain
+					any of your data.
+				</p>
+			</div>
+
+			<!-- Status -->
+			<div
+				id="status"
+				class="hidden items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-sm leading-relaxed">
+			</div>
+
+			<!-- Actions -->
+			<div class="flex flex-wrap gap-2">
+				<button
+					id="check-btn"
+					type="button"
+					class="btn-primary">
+					<IconRefresh id="check-btn-icon" aria-hidden="true" class="btn-icon" />
+					<span data-i18n="activate.checkCta">Check now</span>
+				</button>
+				<a href="/login" class="btn">
+					<span data-i18n="activate.manualCta">Enter my subscription manually</span>
+				</a>
+			</div>
+
+		</div>
+
+		<p data-i18n="activate.fineprint" class="mt-12 text-xs text-fg-3 leading-relaxed">
+			This app does not provide any content or subscriptions itself.
+			Activation only works with a provider who supports device-code
+			pairing for this app.
+		</p>
+
+		</div>
+	</main>
+</Layout>
+
+<script>
+	import { addEntry } from "@/scripts/lib/creds.js";
+	import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js";
+	import { log } from "@/scripts/lib/log.js";
+	import {
+		getOrCreateDeviceId,
+		activationServerConfigured,
+		checkDeviceActivation,
+	} from "@/scripts/lib/device-activation.ts";
+
+	const $ = (id: string) => /** @type {any} */ (document.getElementById(id));
+
+	const codeEl = $("device-code") as HTMLElement;
+	const copyBtn = $("copy-code-btn") as HTMLButtonElement;
+	const statusEl = $("status") as HTMLElement;
+	const checkBtn = $("check-btn") as HTMLButtonElement;
+	const checkBtnIcon = $("check-btn-icon") as HTMLElement | null;
+
+	const deviceId = getOrCreateDeviceId();
+	codeEl.textContent = deviceId;
+
+	function escapeText(s: string) {
+		const d = document.createElement("div");
+		d.textContent = s;
+		return d.innerHTML;
+	}
+
+	function clearStatus() {
+		statusEl.classList.add("hidden");
+		statusEl.classList.remove("flex");
+		statusEl.innerHTML = "";
+	}
+
+	function showStatus(kind: "info" | "active" | "expired" | "unavailable" | "busy", message: string) {
+		statusEl.classList.remove("hidden");
+		statusEl.classList.add("flex");
+		statusEl.className =
+			"flex items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-sm leading-relaxed ";
+		const palette = {
+			info: "border-accent/30 bg-accent-soft text-accent",
+			active: "border-ok/30 bg-ok/10 text-ok",
+			expired: "border-warn/30 bg-warn/10 text-warn",
+			unavailable: "border-bad/30 bg-bad/10 text-bad",
+			busy: "border-line bg-surface text-fg-2",
+		};
+		statusEl.className += palette[kind] || palette.info;
+		const dot = `<span aria-hidden="true" class="mt-2 inline-block h-1.5 w-1.5 rounded-full bg-current shrink-0"></span>`;
+		statusEl.innerHTML = `${dot}<span>${escapeText(message)}</span>`;
+	}
+
+	copyBtn.addEventListener("click", async () => {
+		try {
+			await navigator.clipboard.writeText(deviceId);
+			showStatus("info", t("activate.copied"));
+		} catch {
+			// Clipboard API unavailable (permissions, non-secure context) - the
+			// code is `select-all` styled so the user can still select + copy by hand.
+		}
+	});
+
+	let polling = false;
+	let pollTimer: ReturnType<typeof setTimeout> | null = null;
+
+	async function runCheck(auto = false) {
+		if (polling) return;
+		polling = true;
+		checkBtn.disabled = true;
+		checkBtnIcon?.classList.add("animate-spin");
+		if (!auto) showStatus("busy", t("activate.status.checking"));
+		try {
+			const result = await checkDeviceActivation(deviceId);
+			if (result.status === "not-configured") {
+				showStatus("unavailable", t("activate.status.notConfigured"));
+				return;
+			}
+			if (result.status === "error") {
+				showStatus("unavailable", t("activate.status.error", { error: result.error || "" }));
+				return;
+			}
+			if (result.status === "expired") {
+				showStatus("expired", t("activate.status.expired"));
+				return;
+			}
+			if (result.status === "pending") {
+				showStatus("busy", t("activate.status.pending"));
+				return;
+			}
+			// active
+			const patch =
+				result.type === "m3u"
+					? { type: "m3u", url: result.m3uUrl || "" }
+					: {
+							type: "xtream",
+							serverUrl: result.serverUrl || "",
+							username: result.username || "",
+							password: result.password || "",
+					  };
+			await addEntry(patch);
+			showStatus("active", t("activate.status.active"));
+			stopPolling();
+			setTimeout(() => {
+				window.location.href = "/livetv";
+			}, 900);
+		} catch (err) {
+			log.warn("[xt:activate] check failed:", err);
+			showStatus("unavailable", t("activate.status.error", { error: String((err as Error)?.message || err) }));
+		} finally {
+			polling = false;
+			checkBtn.disabled = false;
+			checkBtnIcon?.classList.remove("animate-spin");
+		}
+	}
+
+	function stopPolling() {
+		if (pollTimer) clearTimeout(pollTimer);
+		pollTimer = null;
+	}
+
+	function scheduleNextPoll() {
+		stopPolling();
+		pollTimer = setTimeout(async () => {
+			await runCheck(true);
+			scheduleNextPoll();
+		}, 8000);
+	}
+
+	checkBtn.addEventListener("click", () => runCheck(false));
+
+	document.addEventListener(LOCALE_EVENT, () => {
+		// Re-render the current status message (if any) in the new locale by
+		// re-running a silent check only when nothing is in flight; otherwise
+		// just leave it - the next poll/click will pick up the new locale.
+	});
+
+	if (activationServerConfigured()) {
+		runCheck(true).then(scheduleNextPoll);
+	} else {
+		clearStatus();
+		showStatus("unavailable", t("activate.status.notConfigured"));
+	}
+
+	window.addEventListener("beforeunload", stopPolling);
+</script>

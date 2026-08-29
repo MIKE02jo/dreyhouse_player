@@ -1,5 +1,5 @@
 ---
-import { IconPlus, IconSparkles, IconUpload } from "@tabler/icons-svelte";
+import { IconPlus, IconSparkles, IconUpload, IconKey } from "@tabler/icons-svelte";
 ---
 
 <div class="welcome-enter welcome-card rounded-2xl border border-line bg-surface text-center">
@@ -29,6 +29,10 @@ import { IconPlus, IconSparkles, IconUpload } from "@tabler/icons-svelte";
 		<a href="/login?demo=1" class="btn">
 			<IconSparkles aria-hidden="true" class="btn-icon text-accent" />
 			<span data-i18n="playlist.demoCta">Try a demo playlist</span>
+		</a>
+		<a href="/activate" class="btn">
+			<IconKey aria-hidden="true" class="btn-icon text-accent" />
+			<span data-i18n="playlist.activateCta">Activate with a code</span>
 		</a>
 	</div>
 

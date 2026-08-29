@@ -479,8 +479,45 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
     DOWNLOADS_LIST_EVENT,
     DOWNLOAD_PROGRESS_EVENT,
   } from "@/scripts/lib/downloads.js"
-  import { toastSuccess, toastError } from "@/scripts/lib/toast.js"
+  import { toastSuccess, toastError, toastWarn } from "@/scripts/lib/toast.js"
   import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js"
+  import {
+    CATALOG_WARMING_START_EVENT,
+    CATALOG_WARMED_EVENT,
+  } from "@/scripts/lib/catalog.js"
+
+  // IPTV-Smarter-style gate: while the active playlist's channels/movies/
+  // series are still being fetched for the first time (cold cache - repeat
+  // visits skip this, see warmupActive()'s `allHot` check), block entry into
+  // those three sections instead of letting the user land on a half-loaded
+  // page. Home, search, favorites, EPG, downloads and settings stay open.
+  const GATED_SELECTOR = 'a[href="/livetv"], a[href="/movies"], a[href="/series"]'
+  let catalogWarming = false
+
+  function setGatedDisabled(disabled) {
+    document.querySelectorAll(GATED_SELECTOR).forEach((a) => {
+      a.setAttribute("aria-disabled", disabled ? "true" : "false")
+      a.classList.toggle("nav-link--gated", disabled)
+    })
+  }
+
+  document.querySelectorAll(GATED_SELECTOR).forEach((a) => {
+    a.addEventListener("click", (ev) => {
+      if (!catalogWarming) return
+      if (a.getAttribute("aria-current") === "page") return
+      ev.preventDefault()
+      toastWarn(t("nav.stillLoading"))
+    })
+  })
+
+  document.addEventListener(CATALOG_WARMING_START_EVENT, () => {
+    catalogWarming = true
+    setGatedDisabled(true)
+  })
+  document.addEventListener(CATALOG_WARMED_EVENT, () => {
+    catalogWarming = false
+    setGatedDisabled(false)
+  })
 
   function onLoginPage() {
     return (
@@ -763,5 +800,16 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   @media (prefers-reduced-motion: reduce) {
     .brand-mark__trail { display: none; }
     .brand-mark__mark { opacity: 0.7; }
+  }
+
+  /* Dimmed, non-navigable state while the catalog's first load is still in
+     flight (see the gating script above). Kept low-key - a spinner glued
+     to every nav icon read as broken more than as "loading". */
+  .nav-link--gated {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .nav-link--gated:hover {
+    background-color: transparent;
   }
 </style>
