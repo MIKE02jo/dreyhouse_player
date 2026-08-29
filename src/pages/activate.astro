@@ -98,6 +98,7 @@ import { IconArrowLeft, IconCopy, IconRefresh } from "@tabler/icons-svelte";
 		getOrCreateDeviceId,
 		activationServerConfigured,
 		checkDeviceActivation,
+		buildEntryPatch,
 	} from "@/scripts/lib/device-activation.ts";
 
 	const $ = (id: string) => /** @type {any} */ (document.getElementById(id));
@@ -178,16 +179,7 @@ import { IconArrowLeft, IconCopy, IconRefresh } from "@tabler/icons-svelte";
 				return;
 			}
 			// active
-			const patch =
-				result.type === "m3u"
-					? { type: "m3u", url: result.m3uUrl || "" }
-					: {
-							type: "xtream",
-							serverUrl: result.serverUrl || "",
-							username: result.username || "",
-							password: result.password || "",
-					  };
-			await addEntry(patch);
+			await addEntry(buildEntryPatch(result));
 			showStatus("active", t("activate.status.active"));
 			stopPolling();
 			setTimeout(() => {

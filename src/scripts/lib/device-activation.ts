@@ -24,6 +24,19 @@ function toHex(byte: number): string {
   return byte.toString(16).padStart(2, "0").toUpperCase()
 }
 
+/** Read the device code without generating one - used on app launch to
+ *  decide whether there's an activation to silently re-check (see
+ *  checkPendingActivationOnLaunch below). Returns null for an install that
+ *  never opened /activate, so we don't invent a code just to poll a server
+ *  nobody has this install's id for yet. */
+export function peekDeviceId(): string | null {
+  try {
+    return localStorage.getItem(DEVICE_ID_KEY)
+  } catch {
+    return null
+  }
+}
+
 /** Stable per-install device code, generated once and persisted. */
 export function getOrCreateDeviceId(): string {
   try {
@@ -83,4 +96,18 @@ export async function checkDeviceActivation(deviceId: string): Promise<Activatio
   } catch (err) {
     return { status: "error", error: String((err as Error)?.message || err) }
   }
+}
+
+/** Shape a successful ActivationResult into the `patch` addEntry() from
+ *  creds.js expects - shared between /activate's own check and the
+ *  silent on-launch check below so both save a playlist the same way. */
+export function buildEntryPatch(result: ActivationResult): Record<string, unknown> {
+  return result.type === "m3u"
+    ? { type: "m3u", url: result.m3uUrl || "" }
+    : {
+        type: "xtream",
+        serverUrl: result.serverUrl || "",
+        username: result.username || "",
+        password: result.password || "",
+      }
 }

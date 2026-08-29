@@ -313,12 +313,13 @@ import {
 	import "../scripts/updater-startup.js";
 	import { log } from "@/scripts/lib/log.js";
 	import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js";
-	import { getEntries, getActiveEntry, loadCreds } from "@/scripts/lib/creds.js";
+	import { getEntries, getActiveEntry, loadCreds, addEntry } from "@/scripts/lib/creds.js";
 	import { getCached, hydrate as hydrateCache } from "@/scripts/lib/cache.js";
 	import { getRecents, ensureLoaded as ensurePrefsLoaded } from "@/scripts/lib/preferences.js";
 	import { getProgrammesSync, getNowNextForChannel, loadProgrammes } from "@/scripts/lib/epg-data.js";
 	import { toastWarn } from "@/scripts/lib/toast.js";
 	import { bindGatedLinks } from "@/scripts/lib/catalog-gate.ts";
+	import { peekDeviceId, checkDeviceActivation, buildEntryPatch } from "@/scripts/lib/device-activation.ts";
 
 	// Tap-to-download: Live TV/Movies/Series stay untouched until the user
 	// actually taps one, at which point warmupActive() runs (all three kinds
@@ -423,12 +424,34 @@ import {
 		return hasEntries;
 	}
 
+	// A customer only sees the "Activate with a code" screen once, then
+	// closes the app - a seller activating them minutes or hours later has
+	// nothing to notify that screen even if it re-polls while open. So on
+	// every app launch, if there's no playlist yet but a code was already
+	// generated (i.e. the customer did visit /activate at some point),
+	// silently re-check once here instead of requiring them to remember to
+	// reopen that exact screen. Errors are swallowed - this is a courtesy
+	// check, /activate's own "Check now" stays the reliable fallback.
+	async function checkPendingActivationOnLaunch() {
+		const deviceId = peekDeviceId();
+		if (!deviceId) return;
+		try {
+			const result = await checkDeviceActivation(deviceId);
+			if (result.status !== "active") return;
+			await addEntry(buildEntryPatch(result));
+			await reconcileFirstRun();
+		} catch (err) {
+			log.warn("[xt:hub] launch activation check failed:", err);
+		}
+	}
+
 	window.addEventListener("load", async () => {
 		const hasEntries = await reconcileFirstRun();
 		if (!hasEntries) {
 			document
 				.querySelector("#welcome a.btn-primary")
 				?.focus({ preventScroll: true });
+			checkPendingActivationOnLaunch();
 		}
 	});
 
