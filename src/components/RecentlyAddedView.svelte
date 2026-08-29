@@ -4,10 +4,7 @@
   import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js"
   import { getActiveEntry } from "@/scripts/lib/creds.js"
   import { getCached, hydrate as hydrateCache } from "@/scripts/lib/cache.js"
-  import {
-    warmupActive,
-    CATALOG_WARMED_EVENT,
-  } from "@/scripts/lib/catalog.js"
+  import { CATALOG_WARMED_EVENT } from "@/scripts/lib/catalog.js"
   import { fmtImdbRating } from "@/scripts/lib/format.js"
   import { kindLabel } from "@/scripts/lib/kinds.js"
   import { cachedImg } from "@/scripts/lib/img-cache.ts"
@@ -85,10 +82,10 @@
       (firstRow, secondRow) => secondRow.ts - firstRow.ts
     )
     loading = false
-    if (!merged.length) {
-      // Cache may be cold - kick a warmup so the catalog populates.
-      warmupActive().catch(() => {})
-    }
+    // Content only downloads when a tile is tapped (see catalog-gate.ts) -
+    // an empty result here just means Movies/Series haven't been opened
+    // yet, not a cache miss to silently paper over with a background
+    // fetch. The empty state below points the user back to the hub.
   }
 
   function setFilter(next) {

@@ -178,12 +178,15 @@ import { IconArrowLeft, IconCopy, IconRefresh } from "@tabler/icons-svelte";
 				showStatus("busy", t("activate.status.pending"));
 				return;
 			}
-			// active
+			// active - land on the hub, not straight into a catalog page. Nothing
+			// has been downloaded yet (content only fetches when a tile is tapped,
+			// see catalog-gate.ts), so dropping the customer directly into
+			// /livetv would either show it empty or force an ungated fetch.
 			await addEntry(buildEntryPatch(result));
 			showStatus("active", t("activate.status.active"));
 			stopPolling();
 			setTimeout(() => {
-				window.location.href = "/livetv";
+				window.location.href = "/";
 			}, 900);
 		} catch (err) {
 			log.warn("[xt:activate] check failed:", err);

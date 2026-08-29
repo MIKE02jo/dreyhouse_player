@@ -3,7 +3,6 @@
 // reconnect, and dispatches xt:reconnected so EPG / catalog can opt to
 // refresh in the background.
 
-import { log } from "@/scripts/lib/log.js"
 import { toast } from "@/scripts/lib/toast.js"
 import { t } from "@/scripts/lib/i18n.js"
 
@@ -34,28 +33,17 @@ export function initConnectivity() {
   initialized = true
   if (navigator.onLine === false) showOfflineToast()
   window.addEventListener("offline", showOfflineToast)
-  window.addEventListener("online", async () => {
+  window.addEventListener("online", () => {
     clearOfflineToast()
+    // Content only downloads when a tile is tapped (see catalog-gate.ts) -
+    // this used to force a full live+vod+series re-fetch on every
+    // reconnect (including a plain app resume from background, which the
+    // WebView reports the same way as a real network recovery), racing
+    // whatever the user was already loading and re-downloading catalogs
+    // nobody asked for again. Just clear the toast and let whichever page
+    // is open re-fetch on its own terms if it needs to.
     try {
       document.dispatchEvent(new CustomEvent(RECONNECT_EVENT))
     } catch {}
-    try {
-      const { warmupActive } = await import("@/scripts/lib/catalog.js")
-      warmupActive().catch((err) => {
-        log.warn("[xt:connectivity] warmup after reconnect failed:", err)
-        try {
-          toast({
-            title: t("stream.offline.reconnectFailedTitle") || "Still having trouble",
-            description:
-              t("stream.offline.reconnectFailedBody") ||
-              "Reconnected, but couldn't refresh the catalog. Check your playlist or try again.",
-            variant: "warn",
-            duration: 4000,
-          })
-        } catch {}
-      })
-    } catch (err) {
-      log.warn("[xt:connectivity] catalog module load failed after reconnect:", err)
-    }
   })
 }

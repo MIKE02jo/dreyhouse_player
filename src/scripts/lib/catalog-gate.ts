@@ -29,7 +29,7 @@ import {
   ensureSeries,
   CATALOG_WARMING_BYTES_EVENT,
 } from "@/scripts/lib/catalog.js"
-import { getCached } from "@/scripts/lib/cache.js"
+import { getCached, hydrate as hydrateCache } from "@/scripts/lib/cache.js"
 import { getActiveEntry, loadCreds } from "@/scripts/lib/creds.js"
 
 export type CatalogKind = "live" | "vod" | "series"
@@ -69,12 +69,20 @@ let starting = false
 let pendingHref: string | null = null
 const listeners = new Set<GateHandlers>()
 
-function isKindWarm(playlistId: string, kind: CatalogKind): boolean {
+// getCached() only reads the in-memory layer, which starts empty on every
+// fresh app launch even though the data is still sitting in IndexedDB from
+// a previous session - hydrate() loads it back in first. Without this, the
+// very first tap after reopening the app always looked cold and re-fetched
+// content that was already downloaded (the "leaving and coming back
+// re-downloads everything" report).
+async function isKindWarm(playlistId: string, kind: CatalogKind): Promise<boolean> {
   if (kind === "live") {
     // Xtream sources cache under "live", M3U sources under "m3u" - either
     // being warm means the Live TV tile has something to show.
+    await Promise.all([hydrateCache(playlistId, "live"), hydrateCache(playlistId, "m3u")])
     return !!getCached(playlistId, "live") || !!getCached(playlistId, "m3u")
   }
+  await hydrateCache(playlistId, kind)
   return !!getCached(playlistId, kind)
 }
 
@@ -168,8 +176,8 @@ export function bindGatedLinks(root: ParentNode, handlers: GateHandlers = {}): v
         startOrJoinDownload(href, kind)
         return
       }
-      getActiveEntry().then((active) => {
-        if (!active || isKindWarm(active._id, kind)) {
+      getActiveEntry().then(async (active) => {
+        if (!active || (await isKindWarm(active._id, kind))) {
           window.location.href = href
           return
         }
