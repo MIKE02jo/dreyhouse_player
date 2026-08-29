@@ -11,6 +11,7 @@ import android.util.Log
 import android.util.Rational
 import android.view.KeyEvent
 import android.view.View
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -64,6 +65,7 @@ class VideoActivity : AppCompatActivity() {
   }
 
   private var playerView: PlayerView? = null
+  private var backButton: ImageButton? = null
   private var channelOverlay: LinearLayout? = null
   private var channelListView: RecyclerView? = null
 
@@ -114,8 +116,20 @@ class VideoActivity : AppCompatActivity() {
     setContentView(R.layout.activity_video)
 
     playerView = findViewById(R.id.player_view)
+    backButton = findViewById(R.id.player_back_button)
     channelOverlay = findViewById(R.id.channel_list_overlay)
     channelListView = findViewById(R.id.channel_list)
+
+    // The system/gesture back action always exited this screen, but nothing
+    // on screen told a touch user it existed - this button is the visible
+    // equivalent, and stays in step with PlayerView's own controls (shown
+    // together, hidden together) instead of permanently covering the video.
+    backButton?.setOnClickListener { finish() }
+    playerView?.setControllerVisibilityListener(
+      PlayerView.ControllerVisibilityListener { visibility ->
+        backButton?.visibility = visibility
+      }
+    )
 
     mode = intent.getStringExtra(EXTRA_MODE) ?: MODE_VOD
     contentKey = intent.getStringExtra(EXTRA_CONTENT_KEY) ?: ""

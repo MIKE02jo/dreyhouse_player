@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Circular dark scrim behind the player's exit button, so the white
+     arrow stays legible over bright video content. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#66000000" />
+</shape>
