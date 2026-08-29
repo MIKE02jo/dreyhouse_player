@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import HubStrips from "@/components/HubStrips.svelte";
 import WelcomeCard from "@/components/WelcomeCard.astro";
+import PlaylistSwitcher from "@/components/PlaylistSwitcher.svelte";
 import {
 	IconDeviceTv,
 	IconMovie,
@@ -53,6 +54,10 @@ import {
 			class="welcome-section hidden flex-1 min-h-0 items-center justify-center py-6">
 			<WelcomeCard />
 		</section>
+
+		<div id="hub-account-switcher" class="relative z-30 shrink-0 flex justify-center sm:justify-start">
+			<PlaylistSwitcher client:load />
+		</div>
 
 		<nav
 			id="hub-tiles"
@@ -245,7 +250,8 @@ import {
 		animation: tile-enter 500ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 	}
 	html[data-first-run="true"] #hub-tiles,
-	html[data-first-run="true"] #hub-secondary-tiles {
+	html[data-first-run="true"] #hub-secondary-tiles,
+	html[data-first-run="true"] #hub-account-switcher {
 		display: none;
 	}
 	html[data-first-run="true"] #welcome {

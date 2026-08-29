@@ -62,19 +62,14 @@
     triggerEl?.focus()
   }
 
-  function isRailExpanded() {
-    return (
-      window.matchMedia("(min-width: 64rem)").matches &&
-      !document.documentElement.hasAttribute("data-sidebar-collapsed")
-    )
-  }
-
   function onTriggerClick(event) {
     event.stopPropagation()
-    if (!isRailExpanded()) {
-      window.location.href = "/settings"
-      return
-    }
+    // Used to jump straight to /settings below 1024px, back when this
+    // lived in a rail that collapsed to icon-only there and had no room
+    // for a dropdown. Its only home now is the top of the hub page at
+    // every width, so it always opens the account list - this was the
+    // actual reason a phone never showed the "which account" picker at
+    // all (the tap silently redirected instead of ever reaching here).
     if (isOpen) closePopover()
     else openPopover()
   }
@@ -192,7 +187,7 @@
   bind:this={wrapEl}
   data-ps-wrap
   data-open={isOpen ? "true" : "false"}
-  class="relative [view-transition-name:playlist-switcher]">
+  class="relative min-w-64 max-w-full [view-transition-name:playlist-switcher]">
   <button
     bind:this={triggerEl}
     id="ps-trigger"
@@ -203,28 +198,28 @@
     title="Switch playlist"
     data-i18n-attr="title:playlist.switch"
     onclick={onTriggerClick}
-    class="flex w-full min-w-0 items-center gap-2.5 px-1 rail-expanded:px-2.5 py-2.5 min-h-11 rounded-xl border border-line bg-surface text-sm font-medium text-fg transition-colors hover:bg-surface-2 focus-visible:bg-surface-2 focus-visible:border-accent
-      justify-center rail-expanded:justify-between">
+    class="flex w-full min-w-0 items-center gap-2.5 px-2.5 py-2.5 min-h-11 rounded-xl border border-line bg-surface text-sm font-medium text-fg transition-colors hover:bg-surface-2 focus-visible:bg-surface-2 focus-visible:border-accent
+      justify-between">
     <span class="flex items-center gap-2.5 min-w-0">
       <span
         id="ps-badge"
         class:text-sm={isEmojiBadge}
         class:text-label={!isEmojiBadge}
         class:uppercase={!isEmojiBadge}
-        class="h-5 inline-flex items-center justify-center rounded-md font-semibold text-fg-2 shrink-0 px-0 ring-0 rail-expanded:px-1.5 rail-expanded:ring-1 rail-expanded:ring-line">
+        class="h-5 inline-flex items-center justify-center rounded-md font-semibold text-fg-2 shrink-0 px-1.5 ring-1 ring-line">
         {activeBadge}
       </span>
       <span
         id="ps-title"
         class:text-fg={hasActive}
         class:text-fg-3={!hasActive}
-        class="hidden rail-expanded:inline rail-reveal truncate tracking-tight">
+        class="inline truncate tracking-tight">
         {activeTitle}
       </span>
     </span>
     <IconChevronDown
       aria-hidden="true"
-      class="hidden rail-expanded:block h-4 w-4 text-fg-3 shrink-0 transition-transform duration-200 ps-chevron"
+      class="block h-4 w-4 text-fg-3 shrink-0 transition-transform duration-200 ps-chevron"
     />
   </button>
 
@@ -236,7 +231,7 @@
     hidden={!isOpen}
     class="ps-popover
       max-h-[min(70dvh,32rem)]
-      rounded-t-xl border border-line border-b-0 bg-surface text-fg
+      rounded-b-xl border border-line border-t-0 bg-surface text-fg
       overflow-hidden">
     <div
       bind:this={listEl}
@@ -273,11 +268,14 @@
 </div>
 
 <style>
+  /* Opens downward: this now only lives at the top of the home hub (its
+     one remaining usage), not a rail footer near the bottom of the screen
+     where opening upward made sense. */
   [data-ps-wrap][data-open="true"] :global(#ps-popover) {
     display: flex;
     flex-direction: column;
     position: absolute;
-    bottom: 100%;
+    top: 100%;
     left: 0;
     right: 0;
     z-index: 50;
@@ -286,8 +284,8 @@
     transform: rotate(180deg);
   }
   :global(#ps-trigger[aria-expanded="true"]) {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     background-color: var(--color-surface-2);
   }
 </style>

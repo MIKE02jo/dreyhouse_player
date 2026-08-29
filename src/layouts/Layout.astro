@@ -1,6 +1,5 @@
 ---
 import { IconArrowLeft } from "@tabler/icons-svelte"
-import Sidebar from "@/components/Sidebar.astro"
 import TitleBar from "@/components/TitleBar.astro"
 import WindowResizeEdges from "@/components/WindowResizeEdges.astro"
 import CatalogWarmingIndicator from "@/components/CatalogWarmingIndicator.svelte"
@@ -16,13 +15,14 @@ const documentTitle = pageTitle
   ? `${pageTitle} | DREYHOUSE PLAYER`
   : "DREYHOUSE PLAYER"
 
-// The rail/bottom-nav only ever shows on the home hub now - every other
-// page (Live TV, Movies, Series, Settings, EPG, ...) is that one section
-// and nothing else, matching IPTV Smarters Pro's model this was built
-// after. Losing the sidebar there would also lose the only way back to the
-// hub, so every other page gets one small back-to-home control instead
-// (see the isHome branch below) rather than each page having to add its
-// own.
+// Every page (Live TV, Movies, Series, Settings, EPG, ...) is that one
+// section and nothing else, matching IPTV Smarters Pro's model this was
+// built after - the sidebar rail/bottom-nav is gone entirely (index.astro's
+// own hub tiles are the only navigation surface, including a Settings tile
+// and its own always-visible account switcher for picking between several
+// device-activated accounts). Every non-home page instead gets one small
+// back-to-home control (see the isHome branch below) so navigation is never
+// lost, without each page having to add its own.
 const isHome = Astro.url.pathname.replace(/\/$/, "") === ""
 ---
 
@@ -322,7 +322,6 @@ const isHome = Astro.url.pathname.replace(/\/$/, "") === ""
     <div
       class="flex-1 min-h-0 flex flex-col md:flex-row landscape-phone:flex-row"
     >
-      {isHome && <Sidebar />}
       <div
         class="flex-1 min-w-0 min-h-0 flex flex-col order-first md:order-0
                 overflow-x-clip overflow-y-auto"
@@ -359,9 +358,9 @@ const isHome = Astro.url.pathname.replace(/\/$/, "") === ""
       import { injectVersion } from "@/scripts/version.js"
       import { startActivationRevalidationLoop } from "@/scripts/lib/activation-revalidate.ts"
       injectVersion()
-      // Was started from Sidebar.astro, which now only renders on the home
-      // hub - moved here so it keeps running on every page regardless
-      // (idempotent, so home doesn't double-start it).
+      // Runs from here (not a per-page script) so it keeps checking no
+      // matter which page the customer is on, idempotent so it only
+      // actually starts once regardless of how many pages call it.
       startActivationRevalidationLoop()
     </script>
     <CatalogWarmingIndicator client:idle />

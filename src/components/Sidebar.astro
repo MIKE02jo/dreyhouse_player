@@ -162,69 +162,15 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
     )
   })()}
 
-  <nav class="flex flex-col gap-1 flex-1 mt-1" aria-label="Main" data-i18n-attr="aria-label:sidebar.mainLabel">
-    {items.map(({ href, key, label, Icon, match, id }) => {
-      const active = match(path)
-      const isDownloads = id === "nav-downloads"
-      return (
-        <a
-          href={href}
-          id={id}
-          aria-label={label}
-          aria-current={active ? "page" : undefined}
-          title={label}
-          data-i18n-attr={`aria-label:${key};title:${key}`}
-          class:list={[
-            "flex items-center gap-3 rounded-xl px-2.5 py-2.5 min-h-11",
-            "justify-center rail-expanded:justify-start",
-            "transition-[color,background-color,transform] duration-150 outline-none",
-            "hover:bg-surface-2 focus-visible:bg-surface-2 active:scale-[0.98]",
-            active
-              ? "bg-surface-2 text-fg ring-1 ring-accent/40"
-              : "text-fg-2 hover:text-fg focus-visible:text-fg",
-          ]}>
-          <span class:list={["relative inline-flex shrink-0"]}>
-            <Icon
-              aria-hidden="true"
-              stroke={active ? 2 : 1.75}
-              class:list={[
-                "size-5 shrink-0",
-                active ? "text-accent" : "text-fg-3",
-              ]}
-            />
-            {isDownloads && (
-              <span
-                id="sidebar-downloads-badge"
-                aria-hidden="true"
-                hidden
-                class="absolute -top-1.5 -right-2 min-w-4.5 h-4.5 px-1
-                       inline-flex items-center justify-center rounded-full
-                       bg-accent text-bg text-[10px] font-semibold leading-none
-                       tabular-nums ring-2 ring-bg">0</span>
-            )}
-            {GATED_HREF_KIND[href] && (
-              <span
-                data-gated-pct={GATED_HREF_KIND[href]}
-                aria-hidden="true"
-                hidden
-                class="absolute -top-1.5 -right-2 min-w-4.5 h-4.5 px-1
-                       inline-flex items-center justify-center rounded-full
-                       bg-accent text-bg text-[10px] font-semibold leading-none
-                       tabular-nums ring-2 ring-bg">0%</span>
-            )}
-          </span>
-          <span data-i18n={key} class="rail-reveal hidden rail-expanded:inline truncate text-sm font-medium">
-            {label}
-          </span>
-          {isDownloads && (
-            <span
-              id="sidebar-downloads-sub"
-              class="hidden rail-expanded:inline ml-auto truncate text-2xs text-fg-3 tabular-nums empty:hidden"></span>
-          )}
-        </a>
-      )
-    })}
-  </nav>
+  {/* Sidebar only ever renders on the home route now (see Layout.astro) -
+      this text list of Live TV/Movies/Series/etc. duplicated the home
+      hub's own tile grid one-for-one, which is exactly the "remove that,
+      it should just be the tiles" report. `items` itself stays (tabItems/
+      moreItems below still read from it for the pages that DO need a nav -
+      the "more" panel and mobile tab row Layout.astro doesn't touch),
+      just not rendered as this list on the rail anymore. flex-1 still
+      pushes the footer (account switcher + Settings) to the bottom. */}
+  <div class="flex-1 mt-1" />
 
   <a
     href="/settings"
