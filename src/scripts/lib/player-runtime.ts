@@ -924,6 +924,123 @@ function createTauriStreamLoaderClass(mpegts: any) {
   }
 }
 
+// Same-origin proxy variant of the loader above, for the plain-browser
+// "Web preview" build (see netlify/edge-functions/xtream-proxy.ts and
+// provider-fetch.js). Real IPTV/Xtream panels almost never send
+// Access-Control-Allow-Origin, so a direct fetch/XHR from a browser tab
+// gets silently blocked the same way it does for the JSON catalog calls -
+// only here it's per-segment, so it needs its own loader rather than a
+// one-shot retry. Everywhere except that deployed web build this proxy
+// endpoint doesn't exist, so this loader is simply never selected (see
+// the `!isTauri` branches below).
+function createProxyStreamLoaderClass(mpegts: any) {
+  const { BaseLoader, LoaderStatus, LoaderErrors } = mpegts
+
+  return class ProxyStreamLoader extends BaseLoader {
+    private _seekHandler: any
+    private _config: any
+    private _abortController: AbortController | null = null
+    private _requestAbort = false
+    private _receivedLength = 0
+    private _rangeFrom = 0
+
+    static isSupported() {
+      return true
+    }
+
+    constructor(seekHandler: any, config: any) {
+      super("proxy-stream-loader")
+      this._seekHandler = seekHandler
+      this._config = config
+      this._needStash = true
+    }
+
+    destroy() {
+      if (this.isWorking()) this.abort()
+      super.destroy()
+    }
+
+    open(dataSource: any, range: { from: number; to: number }) {
+      this._status = LoaderStatus.kConnecting
+      this._requestAbort = false
+      this._receivedLength = 0
+      this._rangeFrom = range?.from > 0 ? range.from : 0
+      this._abortController = new AbortController()
+      const sourceURL = dataSource?.redirectedURL || dataSource?.url
+      const seekConfig = this._seekHandler.getConfig(sourceURL, range)
+      void this._openStream(seekConfig)
+    }
+
+    private async _openStream(seekConfig: { url: string; headers: any }) {
+      try {
+        const headers = new Headers(seekConfig.headers || undefined)
+        const configHeaders = this._config?.headers
+        if (configHeaders && typeof configHeaders === "object") {
+          for (const [headerName, headerValue] of Object.entries(configHeaders)) {
+            headers.set(headerName, String(headerValue))
+          }
+        }
+        const proxied = `/__xt-proxy?url=${encodeURIComponent(seekConfig.url)}`
+        const response = await fetch(proxied, {
+          method: "GET",
+          headers,
+          signal: this._abortController?.signal,
+        })
+        if (this._requestAbort) {
+          try { await response.body?.cancel() } catch {}
+          return
+        }
+        if (!response.ok || !response.body) {
+          try { await response.body?.cancel() } catch {}
+          this._status = LoaderStatus.kError
+          this.onError?.(LoaderErrors.HTTP_STATUS_CODE_INVALID, {
+            code: response.status,
+            msg: response.statusText || `HTTP ${response.status}`,
+          })
+          return
+        }
+        const contentLength = parseInt(response.headers.get("content-length") || "", 10)
+        if (Number.isFinite(contentLength) && contentLength > 0) {
+          this.onContentLengthKnown?.(contentLength)
+        }
+        this._status = LoaderStatus.kBuffering
+        const reader = response.body.getReader()
+        for (;;) {
+          const { done, value } = await reader.read()
+          if (this._requestAbort) {
+            try { await reader.cancel() } catch {}
+            return
+          }
+          if (done) {
+            this._status = LoaderStatus.kComplete
+            this.onComplete?.(this._rangeFrom, this._rangeFrom + this._receivedLength - 1)
+            return
+          }
+          const byteStart = this._rangeFrom + this._receivedLength
+          this._receivedLength += value.byteLength
+          const chunk =
+            value.byteOffset === 0 && value.byteLength === value.buffer.byteLength
+              ? value.buffer
+              : value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength)
+          this.onDataArrival?.(chunk, byteStart, this._receivedLength)
+        }
+      } catch (fetchError: any) {
+        if (this._requestAbort) return
+        this._status = LoaderStatus.kError
+        this.onError?.(LoaderErrors.EXCEPTION, {
+          code: -1,
+          msg: String(fetchError?.message || fetchError),
+        })
+      }
+    }
+
+    abort() {
+      this._requestAbort = true
+      try { this._abortController?.abort() } catch {}
+    }
+  }
+}
+
 function matchesAuthorizedOrigin(requestUrl: string, authorizedOrigin: string | null): boolean {
   if (!authorizedOrigin) return false
   try {
@@ -1088,6 +1205,158 @@ function createTauriHlsLoaderClass(
   }
 }
 
+// Same-origin proxy variant of TauriHlsLoader above, for the plain-browser
+// "Web preview" build. See createProxyStreamLoaderClass for why this exists.
+function createProxyHlsLoaderClass(
+  authorization: string | null = null,
+  authorizedOrigin: string | null = null,
+) {
+  return class ProxyHlsLoader {
+    context: any = null
+    stats: any
+    private callbacks: any = null
+    private abortController: AbortController | null = null
+    private timeoutTimer: ReturnType<typeof setTimeout> | null = null
+    private aborted = false
+    private timedOut = false
+
+    constructor() {
+      this.stats = {
+        aborted: false,
+        loaded: 0,
+        retry: 0,
+        total: 0,
+        chunkCount: 0,
+        bwEstimate: 0,
+        loading: { start: 0, first: 0, end: 0 },
+        parsing: { start: 0, end: 0 },
+        buffering: { start: 0, first: 0, end: 0 },
+      }
+    }
+
+    private clearTimer() {
+      if (this.timeoutTimer) {
+        clearTimeout(this.timeoutTimer)
+        this.timeoutTimer = null
+      }
+    }
+
+    destroy() {
+      this.callbacks = null
+      this.abortInternal()
+      this.context = null
+    }
+
+    private abortInternal() {
+      this.stats.aborted = true
+      this.clearTimer()
+      try { this.abortController?.abort() } catch {}
+    }
+
+    abort() {
+      this.aborted = true
+      this.abortInternal()
+      this.callbacks?.onAbort?.(this.stats, this.context, null)
+    }
+
+    load(context: any, config: any, callbacks: any) {
+      if (this.stats.loading.start) return
+      this.context = context
+      this.callbacks = callbacks
+      this.stats.loading.start = performance.now()
+      this.abortController =
+        typeof AbortController !== "undefined" ? new AbortController() : null
+      const timeoutMs =
+        config?.loadPolicy?.maxLoadTimeMs || config?.timeout || 20_000
+      this.timeoutTimer = setTimeout(() => {
+        if (this.aborted || this.timedOut) return
+        this.timedOut = true
+        this.abortInternal()
+        this.callbacks?.onTimeout?.(this.stats, this.context, null)
+      }, timeoutMs)
+      void this.run(context)
+    }
+
+    private async run(context: any) {
+      try {
+        const { url: requestUrl, authorization: urlAuthorization } = splitUrlAuth(context.url)
+        const headers = new Headers()
+        const effectiveAuthorization =
+          urlAuthorization ||
+          (matchesAuthorizedOrigin(requestUrl, authorizedOrigin) ? authorization : null)
+        if (effectiveAuthorization) headers.set("Authorization", effectiveAuthorization)
+        const { rangeStart, rangeEnd } = context
+        if (
+          Number.isFinite(rangeStart) &&
+          Number.isFinite(rangeEnd) &&
+          rangeEnd > rangeStart
+        ) {
+          headers.set("Range", `bytes=${rangeStart}-${rangeEnd - 1}`)
+        }
+        const proxied = `/__xt-proxy?url=${encodeURIComponent(requestUrl)}`
+        const response = await fetch(proxied, {
+          method: "GET",
+          headers,
+          signal: this.abortController?.signal,
+        })
+        if (this.aborted || this.timedOut) {
+          try { void response.body?.cancel?.()?.catch?.(() => {}) } catch {}
+          return
+        }
+        this.stats.loading.first = performance.now()
+        if (!response.ok && response.status !== 206) {
+          this.clearTimer()
+          try { void response.body?.cancel?.()?.catch?.(() => {}) } catch {}
+          this.callbacks?.onError?.(
+            {
+              code: response.status,
+              text: response.statusText || `HTTP ${response.status}`,
+            },
+            this.context,
+            null,
+            this.stats
+          )
+          return
+        }
+        const wantsBuffer = context.responseType === "arraybuffer"
+        const data: string | ArrayBuffer = wantsBuffer
+          ? await response.arrayBuffer()
+          : await response.text()
+        if (this.aborted || this.timedOut) return
+        this.clearTimer()
+        const length =
+          typeof data === "string" ? data.length : data.byteLength
+        this.stats.loaded = length
+        this.stats.total = length
+        this.stats.loading.end = performance.now()
+        this.callbacks?.onSuccess?.(
+          { url: response.url || context.url, data, code: response.status },
+          this.stats,
+          this.context,
+          null
+        )
+      } catch (error: any) {
+        if (this.aborted || this.timedOut) return
+        this.clearTimer()
+        this.callbacks?.onError?.(
+          { code: 0, text: String(error?.message || error) },
+          this.context,
+          null,
+          this.stats
+        )
+      }
+    }
+
+    getCacheAge() {
+      return null
+    }
+
+    getResponseHeader() {
+      return null
+    }
+  }
+}
+
 interface ActiveHlsRef {
   get: () => { destroy: () => void } | null
   set: (handle: { destroy: () => void } | null) => void
@@ -1185,19 +1454,17 @@ function attachHlsToVideo(
     setNativeSrc(video, url)
     return
   }
-  log.info(`[xt:player] hls transport=hls.js loader=${isTauri ? "tauri-http" : "xhr"}`)
+  log.info(`[xt:player] hls transport=hls.js loader=${isTauri ? "tauri-http" : "proxy"}`)
   const hlsConfig: Record<string, unknown> = { enableWorker: true }
   if (isTauri) {
     hlsConfig.loader = createTauriHlsLoaderClass(authorization, authorizedOrigin)
-  } else if (authorization) {
-    // hls.js calls xhrSetup before its own open(); opening here lets us set
-    // the Authorization header, and hls.js skips its open when already OPENED.
-    // Skip cross-origin requests entirely so credentials stay on their host.
-    hlsConfig.xhrSetup = (xhr: XMLHttpRequest, requestUrl: string) => {
-      if (!matchesAuthorizedOrigin(requestUrl, authorizedOrigin)) return
-      xhr.open("GET", requestUrl, true)
-      xhr.setRequestHeader("Authorization", authorization)
-    }
+  } else {
+    // Plain browser tab (the "Web preview" build): real Xtream/IPTV panels
+    // essentially never send Access-Control-Allow-Origin, so a direct XHR
+    // to the provider gets silently blocked the same way the catalog JSON
+    // calls were. Route every segment/playlist request through our own
+    // same-origin proxy instead of trying a doomed direct XHR first.
+    hlsConfig.loader = createProxyHlsLoaderClass(authorization, authorizedOrigin)
   }
   const hls = new Hls(hlsConfig)
   let netRecover = 0
@@ -1496,6 +1763,7 @@ async function attachMpegts(
   let disposed = false
   let player: any = null
   let triedTauriLoader = false
+  let triedProxyLoader = false
   let durationRetryTimer: ReturnType<typeof setInterval> | null = null
   let offsetWrapTimer: ReturnType<typeof setInterval> | null = null
 
@@ -1591,9 +1859,10 @@ async function attachMpegts(
     }, 300)
   }
 
-  const start = (useTauriLoader: boolean) => {
+  const start = (loaderMode: "default" | "tauri" | "proxy") => {
     const config: Record<string, unknown> = {}
-    if (useTauriLoader) config.customLoader = createTauriStreamLoaderClass(mpegts)
+    if (loaderMode === "tauri") config.customLoader = createTauriStreamLoaderClass(mpegts)
+    else if (loaderMode === "proxy") config.customLoader = createProxyStreamLoaderClass(mpegts)
     if (authorization) config.headers = { Authorization: authorization }
     if (!isLive) {
       try {
@@ -1654,7 +1923,24 @@ async function attachMpegts(
           )
           telemetry?.emit("engine-switch", "mpegts default loader -> mpegts tauri-http loader")
           teardown()
-          start(true)
+          start("tauri")
+          return
+        }
+        // Same case in the plain-browser "Web preview" build: retry once
+        // through our same-origin proxy endpoint before declaring failure.
+        if (
+          errorType === mpegts.ErrorTypes.NETWORK_ERROR &&
+          !isTauri &&
+          !triedProxyLoader
+        ) {
+          triedProxyLoader = true
+          log.warn(
+            "[xt:player] mpegts network error - retrying via proxy loader:",
+            errorDetail
+          )
+          telemetry?.emit("engine-switch", "mpegts default loader -> mpegts proxy loader")
+          teardown()
+          start("proxy")
           return
         }
         const detail = errorInfo?.msg
@@ -1680,7 +1966,12 @@ async function attachMpegts(
   // Browser fetch rejects userinfo URLs, so credentialed streams start straight on the Tauri HTTP loader.
   const startsWithTauriLoader = isTauri && Boolean(authorization)
   if (startsWithTauriLoader) triedTauriLoader = true
-  start(startsWithTauriLoader)
+  // Plain browser tab (the "Web preview" build): skip the doomed default
+  // loader entirely and start straight on the proxy, same reasoning as the
+  // hls.js loader above - a direct request almost never survives CORS.
+  const startsWithProxyLoader = !isTauri
+  if (startsWithProxyLoader) triedProxyLoader = true
+  start(startsWithTauriLoader ? "tauri" : startsWithProxyLoader ? "proxy" : "default")
   return {
     destroy() {
       disposed = true
