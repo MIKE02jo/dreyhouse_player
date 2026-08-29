@@ -484,13 +484,15 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   import { bindGatedLinks } from "@/scripts/lib/catalog-gate.ts"
 
   // Tap-to-download (see catalog-gate.ts): Live TV/Movies/Series don't fetch
-  // anything until tapped. The percentage readout lives on the home hub's
-  // own tiles (index.astro) where there's room for it; here we just dim the
-  // three rows and swap the icon for a spinner while a download triggered
-  // from *either* the rail or the hub tiles is in flight - both bind against
-  // the same shared module, so they stay in sync automatically.
-  function setGatedDownloading(downloading) {
-    document.querySelectorAll('a[href="/livetv"], a[href="/movies"], a[href="/series"]').forEach((a) => {
+  // anything until tapped, and each fetches independently now - only the
+  // row whose kind is actually downloading dims, the other two stay live.
+  // The percentage readout lives on the home hub's own tiles (index.astro)
+  // where there's room for it; here it's just a dim + toast. A download
+  // triggered from *either* the rail or the hub tiles is reflected here
+  // too, since both bind against the same shared module.
+  const KIND_HREF = { live: "/livetv", vod: "/movies", series: "/series" }
+  function setGatedDownloading(kind, downloading) {
+    document.querySelectorAll(`a[href="${KIND_HREF[kind]}"]`).forEach((a) => {
       a.setAttribute("aria-disabled", downloading ? "true" : "false")
       a.classList.toggle("nav-link--gated", downloading)
     })
@@ -500,8 +502,8 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   // own #hub-tiles grid (index.astro) binds its anchors itself, and binding
   // the same <a> twice would double-fire the click handler.
   const gatedHandlers = {
-    onStart: () => setGatedDownloading(true),
-    onDone: () => setGatedDownloading(false),
+    onStart: (kind) => setGatedDownloading(kind, true),
+    onDone: (kind) => setGatedDownloading(kind, false),
     onBlocked: () => toastWarn(t("nav.stillLoading")),
   }
   document.querySelectorAll(".sidebar-rail, [data-mobile-nav]").forEach((root) => {

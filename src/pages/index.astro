@@ -353,25 +353,30 @@ import {
 		},
 	};
 
-	function setTilesDownloading(downloading) {
+	const KIND_HREF = { live: "/livetv", vod: "/movies", series: "/series" };
+
+	// Only the tapped tile shows the downloading state - the other two are
+	// untouched, since each kind now fetches independently (see
+	// catalog-gate.ts). Tapping one must never make the other two look busy.
+	function setTileDownloading(kind, downloading) {
 		if (!hubTiles) return;
-		for (const [kind, parts] of Object.entries(tileParts)) {
-			const link = hubTiles.querySelector(`a[href="${kind === "live" ? "/livetv" : kind === "vod" ? "/movies" : "/series"}"]`);
-			link?.classList.toggle("tile--downloading", downloading);
-			if (parts.progress) parts.progress.hidden = !downloading;
-			if (downloading) {
-				parts.progress?.setAttribute("data-indeterminate", "true");
-				if (parts.sub) parts.sub.textContent = t("hub.tile.downloading");
-			} else {
-				if (parts.fill) parts.fill.style.width = "0%";
-				if (parts.sub) parts.sub.textContent = t(parts.defaultSubKey);
-			}
+		const parts = tileParts[kind];
+		if (!parts) return;
+		const link = hubTiles.querySelector(`a[href="${KIND_HREF[kind]}"]`);
+		link?.classList.toggle("tile--downloading", downloading);
+		if (parts.progress) parts.progress.hidden = !downloading;
+		if (downloading) {
+			parts.progress?.setAttribute("data-indeterminate", "true");
+			if (parts.sub) parts.sub.textContent = t("hub.tile.downloading");
+		} else {
+			if (parts.fill) parts.fill.style.width = "0%";
+			if (parts.sub) parts.sub.textContent = t(parts.defaultSubKey);
 		}
 	}
 
 	if (hubTiles) {
 		bindGatedLinks(hubTiles, {
-			onStart: () => setTilesDownloading(true),
+			onStart: (kind) => setTileDownloading(kind, true),
 			onProgress: (kind, pct) => {
 				const parts = tileParts[kind];
 				if (!parts?.fill || !parts.progress) return;
@@ -383,7 +388,7 @@ import {
 				parts.fill.style.width = `${pct}%`;
 				if (parts.sub) parts.sub.textContent = t("hub.tile.downloadingPct", { pct });
 			},
-			onDone: () => setTilesDownloading(false),
+			onDone: (kind) => setTileDownloading(kind, false),
 			onBlocked: () => toastWarn(t("nav.stillLoading")),
 		});
 	}

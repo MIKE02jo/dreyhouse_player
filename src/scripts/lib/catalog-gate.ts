@@ -44,17 +44,19 @@ export const GATED_LINKS_SELECTOR =
   'a[href="/livetv"], a[href="/movies"], a[href="/series"]'
 
 export interface GateHandlers {
-  /** A download just started (covers all three kinds at once). */
-  onStart?: () => void
-  /** Progress for one kind - pct is null when the response has no known total. */
+  /** A download just started for this one kind - the other two tiles are
+   *  untouched, only the tapped one is fetching. */
+  onStart?: (kind: CatalogKind) => void
+  /** Progress for the in-flight kind - pct is null when the response has no known total. */
   onProgress?: (kind: CatalogKind, pct: number | null) => void
-  /** The in-flight download finished (success or partial failure). */
-  onDone?: () => void
-  /** A gated link was tapped while a download was already in flight. */
-  onBlocked?: () => void
-  /** getActiveEntry()/warmupActive() itself threw - the tile is unstuck
+  /** The in-flight download finished (success or partial failure) - same kind as onStart. */
+  onDone?: (kind: CatalogKind) => void
+  /** A gated link was tapped while a download was already in flight
+   *  (possibly a different kind than the one running). */
+  onBlocked?: (kind: CatalogKind) => void
+  /** getActiveEntry()/the fetch itself threw - the tile is unstuck
    *  (onDone still fires) but navigation did not happen. */
-  onError?: (err: unknown) => void
+  onError?: (err: unknown, kind: CatalogKind) => void
 }
 
 let inFlight: Promise<unknown> | null = null
@@ -117,14 +119,14 @@ async function startOrJoinDownload(href: string, kind: CatalogKind) {
     // flight would otherwise navigate to unfetched data once the first
     // one resolves. Just let it know a download is already running.
     if (kind === inFlightKind) pendingHref = href
-    notify("onBlocked")
+    notify("onBlocked", kind)
     return
   }
   starting = true
   ensureBytesListener()
   pendingHref = href
   inFlightKind = kind
-  notify("onStart")
+  notify("onStart", kind)
   try {
     const active = await getActiveEntry()
     if (active) {
@@ -136,13 +138,13 @@ async function startOrJoinDownload(href: string, kind: CatalogKind) {
     starting = false
     await inFlight
   } catch (err) {
-    notify("onError", err)
+    notify("onError", err, kind)
   } finally {
     inFlight = null
     inFlightKind = null
     starting = false
   }
-  notify("onDone")
+  notify("onDone", kind)
   const dest = pendingHref
   pendingHref = null
   if (dest) window.location.href = dest
