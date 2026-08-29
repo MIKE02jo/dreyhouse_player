@@ -318,13 +318,13 @@ import {
 	import "../scripts/updater-startup.js";
 	import { log } from "@/scripts/lib/log.js";
 	import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js";
-	import { getEntries, getActiveEntry, loadCreds, addEntry } from "@/scripts/lib/creds.js";
+	import { getEntries, getActiveEntry, loadCreds, addEntry, removeEntry } from "@/scripts/lib/creds.js";
 	import { getCached, hydrate as hydrateCache } from "@/scripts/lib/cache.js";
 	import { getRecents, ensureLoaded as ensurePrefsLoaded } from "@/scripts/lib/preferences.js";
 	import { getProgrammesSync, getNowNextForChannel, loadProgrammes } from "@/scripts/lib/epg-data.js";
 	import { toastWarn } from "@/scripts/lib/toast.js";
 	import { bindGatedLinks } from "@/scripts/lib/catalog-gate.ts";
-	import { peekDeviceId, checkDeviceActivation, buildEntryPatch } from "@/scripts/lib/device-activation.ts";
+	import { getOrCreateDeviceId, checkDeviceActivation, buildEntryPatch } from "@/scripts/lib/device-activation.ts";
 
 	// Tap-to-download: Live TV/Movies/Series stay untouched until the user
 	// actually taps one, at which point warmupActive() runs (all three kinds
@@ -443,21 +443,74 @@ import {
 	// A customer only sees the "Activate with a code" screen once, then
 	// closes the app - a seller activating them minutes or hours later has
 	// nothing to notify that screen even if it re-polls while open. So on
-	// every app launch, if there's no playlist yet but a code was already
-	// generated (i.e. the customer did visit /activate at some point),
-	// silently re-check once here instead of requiring them to remember to
-	// reopen that exact screen. Errors are swallowed - this is a courtesy
-	// check, /activate's own "Check now" stays the reliable fallback.
+	// every app launch, if there's no playlist yet, silently re-check here
+	// instead of requiring the customer to remember to reopen that exact
+	// screen. A single check made this a coin flip against the seller's
+	// timing - a customer would have to fully close and reopen the app over
+	// and over until one launch happened to land after the seller clicked
+	// "Activer" (the exact "doesn't take on the first try" report). So this
+	// polls at the same cadence as /activate's own "Check now" loop for as
+	// long as the welcome screen is showing, only stopping once activated
+	// or once the page goes away - the customer doesn't need to stay on any
+	// particular screen, just leave the app open. Errors are swallowed,
+	// this is a courtesy check either way.
+	//
+	// getOrCreateDeviceId() (not the read-only peekDeviceId()) is used here
+	// deliberately: the very first check call auto-registers the device as
+	// "pending" on the site (see device-activate.js), so a brand new
+	// install shows up for the seller to activate as soon as the app is
+	// opened once - it doesn't require the customer to first navigate into
+	// /activate for their code to exist anywhere.
+	const LAUNCH_ACTIVATION_POLL_MS = 8000;
+	let launchActivationTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function stopLaunchActivationPolling() {
+		if (launchActivationTimer) clearTimeout(launchActivationTimer);
+		launchActivationTimer = null;
+	}
+
 	async function checkPendingActivationOnLaunch() {
-		const deviceId = peekDeviceId();
-		if (!deviceId) return;
+		const deviceId = getOrCreateDeviceId();
 		try {
 			const result = await checkDeviceActivation(deviceId);
-			if (result.status !== "active") return;
-			await addEntry(buildEntryPatch(result));
+			if (result.status !== "active") {
+				launchActivationTimer = setTimeout(
+					checkPendingActivationOnLaunch,
+					LAUNCH_ACTIVATION_POLL_MS
+				);
+				return;
+			}
+			stopLaunchActivationPolling();
+			await addEntry(buildEntryPatch(result, deviceId));
 			await reconcileFirstRun();
 		} catch (err) {
 			log.warn("[xt:hub] launch activation check failed:", err);
+			launchActivationTimer = setTimeout(
+				checkPendingActivationOnLaunch,
+				LAUNCH_ACTIVATION_POLL_MS
+			);
+		}
+	}
+
+	// The flip side: a seller deactivating a device on the site after the
+	// customer was already activated used to have no effect at all in the
+	// app - the credentials were already saved locally and nothing ever
+	// checked back. One quiet check per launch (not a poll loop - this
+	// entry is already active, there's no urgency) re-verifies a
+	// device-activated entry is still active on the site, and drops it
+	// back to the welcome screen if the seller revoked it.
+	async function revalidateExistingActivation() {
+		const deviceId = getOrCreateDeviceId();
+		const entries = await getEntries();
+		const linked = entries.find((entry: any) => entry.deviceId === deviceId);
+		if (!linked) return;
+		try {
+			const result = await checkDeviceActivation(deviceId);
+			if (result.status === "active") return;
+			await removeEntry(linked._id);
+			await reconcileFirstRun();
+		} catch (err) {
+			log.warn("[xt:hub] activation revalidation failed:", err);
 		}
 	}
 
@@ -468,8 +521,13 @@ import {
 				.querySelector("#welcome a.btn-primary")
 				?.focus({ preventScroll: true });
 			checkPendingActivationOnLaunch();
+		} else {
+			revalidateExistingActivation();
 		}
 	});
+
+	window.addEventListener("beforeunload", stopLaunchActivationPolling);
+	document.addEventListener("xt:entries-updated", stopLaunchActivationPolling);
 
 	document.addEventListener("xt:entries-updated", reconcileFirstRun);
 	document.addEventListener("xt:active-changed", reconcileFirstRun);

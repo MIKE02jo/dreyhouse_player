@@ -100,14 +100,18 @@ export async function checkDeviceActivation(deviceId: string): Promise<Activatio
 
 /** Shape a successful ActivationResult into the `patch` addEntry() from
  *  creds.js expects - shared between /activate's own check and the
- *  silent on-launch check below so both save a playlist the same way. */
-export function buildEntryPatch(result: ActivationResult): Record<string, unknown> {
+ *  silent on-launch check below so both save a playlist the same way.
+ *  `deviceId` is stamped on the entry itself so a later re-check can find
+ *  which local entry to remove if a seller deactivates the device on the
+ *  site after the fact (see index.astro's revalidation pass). */
+export function buildEntryPatch(result: ActivationResult, deviceId: string): Record<string, unknown> {
   return result.type === "m3u"
-    ? { type: "m3u", url: result.m3uUrl || "" }
+    ? { type: "m3u", url: result.m3uUrl || "", deviceId }
     : {
         type: "xtream",
         serverUrl: result.serverUrl || "",
         username: result.username || "",
         password: result.password || "",
+        deviceId,
       }
 }

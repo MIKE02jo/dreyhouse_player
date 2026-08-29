@@ -182,7 +182,7 @@ import { IconArrowLeft, IconCopy, IconRefresh } from "@tabler/icons-svelte";
 			// has been downloaded yet (content only fetches when a tile is tapped,
 			// see catalog-gate.ts), so dropping the customer directly into
 			// /livetv would either show it empty or force an ungated fetch.
-			await addEntry(buildEntryPatch(result));
+			await addEntry(buildEntryPatch(result, deviceId));
 			showStatus("active", t("activate.status.active"));
 			stopPolling();
 			setTimeout(() => {
