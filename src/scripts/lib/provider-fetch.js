@@ -41,6 +41,43 @@ async function nativeFetch(url, init, u, callerSignal) {
   }
 }
 
+// Only reached from the plain-browser (`!isTauri`) path below, after a
+// direct fetch has already failed - almost always CORS, since IPTV/Xtream
+// panels are built for native players and never send
+// Access-Control-Allow-Origin. See netlify/edge-functions/xtream-proxy.ts
+// for the server side: it's served from this same site, so the browser's
+// request to it is same-origin and never CORS-blocked, and it then fetches
+// the real provider itself (not subject to browser CORS at all). A no-op
+// 404 everywhere except the deployed "Web preview" build (readme.md).
+const PROXY_PATH = "/__xt-proxy"
+
+async function proxyFetch(url, init, u, callerSignal) {
+  const proxied = `${PROXY_PATH}?url=${encodeURIComponent(url)}`
+  try {
+    const r = await fetch(proxied, init)
+    log.log(`[xt:net] proxy ok ${r.status}`, u)
+    return r
+  } catch (e) {
+    if (!callerSignal?.aborted) {
+      log.error("[xt:net] proxy fetch failed", { url: u, error: e })
+    }
+    throw e
+  }
+}
+
+function freshTimeoutSignal() {
+  const timeoutMs = defaultTimeoutMs()
+  if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {
+    return AbortSignal.timeout(timeoutMs)
+  }
+  if (typeof AbortController !== "undefined") {
+    const controller = new AbortController()
+    setTimeout(() => controller.abort(), timeoutMs)
+    return controller.signal
+  }
+  return undefined
+}
+
 /**
  * Drain a Response body to text, calling onProgress(received, total) as
  * bytes accumulate. `total` comes from the Content-Length header (0 if
@@ -167,9 +204,25 @@ export async function providerFetch(url, init = {}) {
       noteSuccess(r.status, context)
       return r
     } catch (e) {
-      if (!callerSignal?.aborted) noteFailure(e, context)
-      else noteAborted(context)
-      throw e
+      if (callerSignal?.aborted) {
+        noteAborted(context)
+        throw e
+      }
+      context.transport = "native-fallback-proxy"
+      log.warn("[xt:net] native fetch failed, retrying via same-origin proxy:", String(e?.message || e))
+      const proxyInit = { ...callInit }
+      // The original timeout signal (if we generated one, not the caller's)
+      // already fired to get us here - reusing it would abort instantly.
+      if (!callerSignal) proxyInit.signal = freshTimeoutSignal()
+      try {
+        const r = await proxyFetch(requestUrl, proxyInit, u, callerSignal)
+        noteSuccess(r.status, context)
+        return r
+      } catch (e2) {
+        if (!callerSignal?.aborted) noteFailure(e2, context)
+        else noteAborted(context)
+        throw e2
+      }
     }
   }
 
