@@ -27,7 +27,7 @@
     "releases": "https://github.com/MIKE02jo/dreyhouse_player/releases",
     "updaterFeed": "https://github.com/MIKE02jo/dreyhouse_player/releases/latest/download/latest.json",
     "docs": "",
-    "activationServer": ""
+    "activationServer": "https://dreyhouse.netlify.app"
   },
   "contact": {
     "supportEmail": "",
