@@ -641,6 +641,11 @@ jobs:
           fi
           cp "$AAB" "$OUT/DREYHOUSE PLAYER_${VERSION}.aab"
           cp "$APK" "$OUT/DREYHOUSE PLAYER_${VERSION}.apk"
+          # Fixed-name copy so the marketing site's Android/Smart TV download
+          # links (…/releases/latest/download/DREYHOUSE-PLAYER-latest.apk)
+          # keep resolving to the newest build forever, with no site edit
+          # needed on every release.
+          cp "$APK" "$OUT/DREYHOUSE-PLAYER-latest.apk"
           echo "out=$OUT" >> "$GITHUB_OUTPUT"
 
       # The AAB never touches the release - Play publishing reads it from here.
