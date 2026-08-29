@@ -318,13 +318,14 @@ import {
 	import "../scripts/updater-startup.js";
 	import { log } from "@/scripts/lib/log.js";
 	import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js";
-	import { getEntries, getActiveEntry, loadCreds, addEntry, removeEntry } from "@/scripts/lib/creds.js";
+	import { getEntries, getActiveEntry, loadCreds, addEntry } from "@/scripts/lib/creds.js";
 	import { getCached, hydrate as hydrateCache } from "@/scripts/lib/cache.js";
 	import { getRecents, ensureLoaded as ensurePrefsLoaded } from "@/scripts/lib/preferences.js";
 	import { getProgrammesSync, getNowNextForChannel, loadProgrammes } from "@/scripts/lib/epg-data.js";
 	import { toastWarn } from "@/scripts/lib/toast.js";
 	import { bindGatedLinks } from "@/scripts/lib/catalog-gate.ts";
-	import { getOrCreateDeviceId, checkDeviceActivation, buildEntryPatch } from "@/scripts/lib/device-activation.ts";
+	import { getOrCreateDeviceId, checkDeviceActivation, buildEntryPatches } from "@/scripts/lib/device-activation.ts";
+	import { startActivationRevalidationLoop } from "@/scripts/lib/activation-revalidate.ts";
 
 	// Tap-to-download: Live TV/Movies/Series stay untouched until the user
 	// actually taps one, at which point warmupActive() runs (all three kinds
@@ -461,7 +462,7 @@ import {
 	// install shows up for the seller to activate as soon as the app is
 	// opened once - it doesn't require the customer to first navigate into
 	// /activate for their code to exist anywhere.
-	const LAUNCH_ACTIVATION_POLL_MS = 8000;
+	const LAUNCH_ACTIVATION_POLL_MS = 3000;
 	let launchActivationTimer: ReturnType<typeof setTimeout> | null = null;
 
 	function stopLaunchActivationPolling() {
@@ -469,6 +470,11 @@ import {
 		launchActivationTimer = null;
 	}
 
+	// A device can carry more than one account (see device-activation.ts) -
+	// every still-valid one gets its own entry, so the existing multi-
+	// playlist entries list / PlaylistSwitcher already doubles as the
+	// "which account do you want" picker. Only 1 was activated -> that's
+	// simply the only entry, selected by default, no picker friction.
 	async function checkPendingActivationOnLaunch() {
 		const deviceId = getOrCreateDeviceId();
 		try {
@@ -481,7 +487,9 @@ import {
 				return;
 			}
 			stopLaunchActivationPolling();
-			await addEntry(buildEntryPatch(result, deviceId));
+			for (const patch of buildEntryPatches(result, deviceId)) {
+				await addEntry(patch);
+			}
 			await reconcileFirstRun();
 		} catch (err) {
 			log.warn("[xt:hub] launch activation check failed:", err);
@@ -489,28 +497,6 @@ import {
 				checkPendingActivationOnLaunch,
 				LAUNCH_ACTIVATION_POLL_MS
 			);
-		}
-	}
-
-	// The flip side: a seller deactivating a device on the site after the
-	// customer was already activated used to have no effect at all in the
-	// app - the credentials were already saved locally and nothing ever
-	// checked back. One quiet check per launch (not a poll loop - this
-	// entry is already active, there's no urgency) re-verifies a
-	// device-activated entry is still active on the site, and drops it
-	// back to the welcome screen if the seller revoked it.
-	async function revalidateExistingActivation() {
-		const deviceId = getOrCreateDeviceId();
-		const entries = await getEntries();
-		const linked = entries.find((entry: any) => entry.deviceId === deviceId);
-		if (!linked) return;
-		try {
-			const result = await checkDeviceActivation(deviceId);
-			if (result.status === "active") return;
-			await removeEntry(linked._id);
-			await reconcileFirstRun();
-		} catch (err) {
-			log.warn("[xt:hub] activation revalidation failed:", err);
 		}
 	}
 
@@ -522,7 +508,12 @@ import {
 				?.focus({ preventScroll: true });
 			checkPendingActivationOnLaunch();
 		} else {
-			revalidateExistingActivation();
+			// Also started from Sidebar.astro (present on every content page) -
+			// idempotent, so whichever page loads first wins and the other is a
+			// no-op. Keeps checking for as long as the app stays open, not just
+			// once at launch, so a seller revoking one account takes effect
+			// quickly wherever the customer currently is in the app.
+			startActivationRevalidationLoop();
 		}
 	});
 

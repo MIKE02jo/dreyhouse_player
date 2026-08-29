@@ -482,6 +482,14 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   import { toastSuccess, toastError, toastWarn } from "@/scripts/lib/toast.js"
   import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js"
   import { bindGatedLinks } from "@/scripts/lib/catalog-gate.ts"
+  import { startActivationRevalidationLoop } from "@/scripts/lib/activation-revalidate.ts"
+
+  // Present on every content page (unlike index.astro's own script), so a
+  // seller revoking a device-activated account takes effect quickly no
+  // matter where the customer currently is in the app, not only when they
+  // happen to be back on the home hub. Idempotent against index.astro's own
+  // call to the same starter.
+  startActivationRevalidationLoop()
 
   // Tap-to-download (see catalog-gate.ts): Live TV/Movies/Series don't fetch
   // anything until tapped, and each fetches independently now - only the

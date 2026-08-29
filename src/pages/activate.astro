@@ -98,7 +98,7 @@ import { IconArrowLeft, IconCopy, IconRefresh } from "@tabler/icons-svelte";
 		getOrCreateDeviceId,
 		activationServerConfigured,
 		checkDeviceActivation,
-		buildEntryPatch,
+		buildEntryPatches,
 	} from "@/scripts/lib/device-activation.ts";
 
 	const $ = (id: string) => /** @type {any} */ (document.getElementById(id));
@@ -181,8 +181,14 @@ import { IconArrowLeft, IconCopy, IconRefresh } from "@tabler/icons-svelte";
 			// active - land on the hub, not straight into a catalog page. Nothing
 			// has been downloaded yet (content only fetches when a tile is tapped,
 			// see catalog-gate.ts), so dropping the customer directly into
-			// /livetv would either show it empty or force an ungated fetch.
-			await addEntry(buildEntryPatch(result, deviceId));
+			// /livetv would either show it empty or force an ungated fetch. A
+			// device can carry more than one account - each becomes its own
+			// entry, and the existing entries list / PlaylistSwitcher already
+			// doubles as the "which account do you want" picker when there's
+			// more than one.
+			for (const patch of buildEntryPatches(result, deviceId)) {
+				await addEntry(patch);
+			}
 			showStatus("active", t("activate.status.active"));
 			stopPolling();
 			setTimeout(() => {
@@ -208,7 +214,7 @@ import { IconArrowLeft, IconCopy, IconRefresh } from "@tabler/icons-svelte";
 		pollTimer = setTimeout(async () => {
 			await runCheck(true);
 			scheduleNextPoll();
-		}, 8000);
+		}, 3000);
 	}
 
 	checkBtn.addEventListener("click", () => runCheck(false));

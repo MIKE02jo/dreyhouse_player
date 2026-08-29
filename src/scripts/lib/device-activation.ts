@@ -58,13 +58,24 @@ export function activationServerConfigured(): boolean {
 
 export type ActivationStatus = "pending" | "active" | "expired" | "error" | "not-configured"
 
-export interface ActivationResult {
-  status: ActivationStatus
-  type?: "xtream" | "m3u"
+/** One account assigned to this device. A device can carry several -
+ *  device-activate.js returns every still-valid one, and the customer
+ *  picks which to use from the names shown in their app (the existing
+ *  entries list / PlaylistSwitcher - see buildEntryPatches below). */
+export interface ActivatedPlaylist {
+  id: string
+  label?: string
+  type: "xtream" | "m3u"
   serverUrl?: string
   username?: string
   password?: string
   m3uUrl?: string
+  expiresAt?: string | null
+}
+
+export interface ActivationResult {
+  status: ActivationStatus
+  playlists?: ActivatedPlaylist[]
   error?: string
 }
 
@@ -83,14 +94,36 @@ export async function checkDeviceActivation(deviceId: string): Promise<Activatio
     }
     const status = (data as any)?.status as ActivationStatus
     if (status === "active") {
-      return {
-        status,
-        type: (data as any).type === "m3u" ? "m3u" : "xtream",
-        serverUrl: (data as any).serverUrl,
-        username: (data as any).username,
-        password: (data as any).password,
-        m3uUrl: (data as any).m3uUrl,
-      }
+      // Prefer the new multi-account shape (`playlists` array). A site not
+      // yet redeployed with that change still answers with the old
+      // single-playlist fields at the top level - fall back to wrapping
+      // those in a one-item array so the app works against either.
+      const rawPlaylists = Array.isArray((data as any)?.playlists) ? (data as any).playlists : null
+      const playlists: ActivatedPlaylist[] = rawPlaylists
+        ? rawPlaylists.map((p: any, i: number) => ({
+            id: String(p?.id || `p${i}`),
+            label: p?.label || "",
+            type: p?.type === "m3u" ? "m3u" : "xtream",
+            serverUrl: p?.serverUrl,
+            username: p?.username,
+            password: p?.password,
+            m3uUrl: p?.m3uUrl,
+            expiresAt: p?.expiresAt ?? null,
+          }))
+        : [
+            {
+              id: "legacy",
+              label: "",
+              type: (data as any).type === "m3u" ? "m3u" : "xtream",
+              serverUrl: (data as any).serverUrl,
+              username: (data as any).username,
+              password: (data as any).password,
+              m3uUrl: (data as any).m3uUrl,
+              expiresAt: (data as any).expiresAt ?? null,
+            },
+          ]
+      if (!playlists.length) return { status: "pending" }
+      return { status, playlists }
     }
     return { status: status === "expired" ? "expired" : "pending" }
   } catch (err) {
@@ -98,20 +131,30 @@ export async function checkDeviceActivation(deviceId: string): Promise<Activatio
   }
 }
 
-/** Shape a successful ActivationResult into the `patch` addEntry() from
- *  creds.js expects - shared between /activate's own check and the
- *  silent on-launch check below so both save a playlist the same way.
- *  `deviceId` is stamped on the entry itself so a later re-check can find
- *  which local entry to remove if a seller deactivates the device on the
- *  site after the fact (see index.astro's revalidation pass). */
-export function buildEntryPatch(result: ActivationResult, deviceId: string): Record<string, unknown> {
-  return result.type === "m3u"
-    ? { type: "m3u", url: result.m3uUrl || "", deviceId }
-    : {
-        type: "xtream",
-        serverUrl: result.serverUrl || "",
-        username: result.username || "",
-        password: result.password || "",
-        deviceId,
-      }
+/** Shape a successful ActivationResult into the `patch` array addEntry()
+ *  from creds.js expects, one per activated playlist - shared between
+ *  /activate's own check and the silent on-launch check below so both
+ *  save playlists the same way. Each entry is stamped with the deviceId
+ *  it came from and the specific devicePlaylistId within it, so a later
+ *  re-check can tell exactly which local entries to drop if a seller
+ *  removes one particular account (see index.astro's revalidation pass) -
+ *  not the whole device. */
+export function buildEntryPatches(result: ActivationResult, deviceId: string): Record<string, unknown>[] {
+  return (result.playlists || []).map((playlist) => {
+    const base =
+      playlist.type === "m3u"
+        ? { type: "m3u", url: playlist.m3uUrl || "" }
+        : {
+            type: "xtream",
+            serverUrl: playlist.serverUrl || "",
+            username: playlist.username || "",
+            password: playlist.password || "",
+          }
+    return {
+      ...base,
+      deviceId,
+      devicePlaylistId: playlist.id,
+      ...(playlist.label ? { title: playlist.label } : {}),
+    }
+  })
 }
