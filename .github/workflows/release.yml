@@ -386,7 +386,7 @@ jobs:
             // GitHub's "read more" fold on long release notes.
             const body = [
               '<p align="center">',
-              '  <img src="https://raw.githubusercontent.com/MIKE02jo/dreyhouse_player/refs/heads/main/src-tauri/icons/logos/readme-lockup-2x.png" alt="DREYHOUSE PLAYER logo" width="400"/>',
+              '  <img src="https://dreyhouse.netlify.app/image/logo-favicon.png" alt="DREYHOUSE PLAYER logo" width="400"/>',
               '</p>',
               '',
               ...(summary ? [`<p align="center">${summary}</p>`, ''] : []),
