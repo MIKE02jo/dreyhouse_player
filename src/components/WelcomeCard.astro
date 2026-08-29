@@ -1,5 +1,5 @@
 ---
-import { IconPlus, IconSparkles, IconUpload, IconKey } from "@tabler/icons-svelte";
+import { IconUpload, IconKey } from "@tabler/icons-svelte";
 ---
 
 <div class="welcome-enter welcome-card rounded-2xl border border-line bg-surface text-center">
@@ -17,21 +17,13 @@ import { IconPlus, IconSparkles, IconUpload, IconKey } from "@tabler/icons-svelt
 	<p
 		data-i18n="welcome.sub"
 		class="welcome-sub mx-auto text-fg-2 font-sans tracking-tight leading-relaxed">
-		Connect an IPTV subscription, or paste a playlist URL.
-		Channels, movies, and series will appear here.
+		Enter the activation code your provider gave you.
+		Your channels, movies and series will load automatically.
 	</p>
 
 	<div class="welcome-actions flex flex-col sm:flex-row gap-2.5 sm:gap-3 sm:justify-center">
-		<a href="/login" class="btn-primary">
-			<IconPlus aria-hidden="true" class="btn-icon" />
-			<span data-i18n="playlist.addCta">Add a playlist</span>
-		</a>
-		<a href="/login?demo=1" class="btn">
-			<IconSparkles aria-hidden="true" class="btn-icon text-accent" />
-			<span data-i18n="playlist.demoCta">Try a demo playlist</span>
-		</a>
-		<a href="/activate" class="btn">
-			<IconKey aria-hidden="true" class="btn-icon text-accent" />
+		<a href="/activate" class="btn-primary">
+			<IconKey aria-hidden="true" class="btn-icon" />
 			<span data-i18n="playlist.activateCta">Activate with a code</span>
 		</a>
 	</div>
@@ -62,8 +54,7 @@ import { IconPlus, IconSparkles, IconUpload, IconKey } from "@tabler/icons-svelt
 	<p
 		data-i18n="welcome.fineprint"
 		class="welcome-fineprint text-fg-3 leading-relaxed">
-		This app does not provide any content. The demo loads a
-		public playlist from iptv-org.
+		This app does not provide any content or subscriptions itself.
 	</p>
 </div>
 

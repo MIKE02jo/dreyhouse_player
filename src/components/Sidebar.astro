@@ -481,42 +481,31 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   } from "@/scripts/lib/downloads.js"
   import { toastSuccess, toastError, toastWarn } from "@/scripts/lib/toast.js"
   import { t, LOCALE_EVENT } from "@/scripts/lib/i18n.js"
-  import {
-    CATALOG_WARMING_START_EVENT,
-    CATALOG_WARMED_EVENT,
-  } from "@/scripts/lib/catalog.js"
+  import { bindGatedLinks } from "@/scripts/lib/catalog-gate.ts"
 
-  // IPTV-Smarter-style gate: while the active playlist's channels/movies/
-  // series are still being fetched for the first time (cold cache - repeat
-  // visits skip this, see warmupActive()'s `allHot` check), block entry into
-  // those three sections instead of letting the user land on a half-loaded
-  // page. Home, search, favorites, EPG, downloads and settings stay open.
-  const GATED_SELECTOR = 'a[href="/livetv"], a[href="/movies"], a[href="/series"]'
-  let catalogWarming = false
-
-  function setGatedDisabled(disabled) {
-    document.querySelectorAll(GATED_SELECTOR).forEach((a) => {
-      a.setAttribute("aria-disabled", disabled ? "true" : "false")
-      a.classList.toggle("nav-link--gated", disabled)
+  // Tap-to-download (see catalog-gate.ts): Live TV/Movies/Series don't fetch
+  // anything until tapped. The percentage readout lives on the home hub's
+  // own tiles (index.astro) where there's room for it; here we just dim the
+  // three rows and swap the icon for a spinner while a download triggered
+  // from *either* the rail or the hub tiles is in flight - both bind against
+  // the same shared module, so they stay in sync automatically.
+  function setGatedDownloading(downloading) {
+    document.querySelectorAll('a[href="/livetv"], a[href="/movies"], a[href="/series"]').forEach((a) => {
+      a.setAttribute("aria-disabled", downloading ? "true" : "false")
+      a.classList.toggle("nav-link--gated", downloading)
     })
   }
 
-  document.querySelectorAll(GATED_SELECTOR).forEach((a) => {
-    a.addEventListener("click", (ev) => {
-      if (!catalogWarming) return
-      if (a.getAttribute("aria-current") === "page") return
-      ev.preventDefault()
-      toastWarn(t("nav.stillLoading"))
-    })
-  })
-
-  document.addEventListener(CATALOG_WARMING_START_EVENT, () => {
-    catalogWarming = true
-    setGatedDisabled(true)
-  })
-  document.addEventListener(CATALOG_WARMED_EVENT, () => {
-    catalogWarming = false
-    setGatedDisabled(false)
+  // Bind only the rail + mobile tab row, never `document` - the home page's
+  // own #hub-tiles grid (index.astro) binds its anchors itself, and binding
+  // the same <a> twice would double-fire the click handler.
+  const gatedHandlers = {
+    onStart: () => setGatedDownloading(true),
+    onDone: () => setGatedDownloading(false),
+    onBlocked: () => toastWarn(t("nav.stillLoading")),
+  }
+  document.querySelectorAll(".sidebar-rail, [data-mobile-nav]").forEach((root) => {
+    bindGatedLinks(root, gatedHandlers)
   })
 
   function onLoginPage() {
