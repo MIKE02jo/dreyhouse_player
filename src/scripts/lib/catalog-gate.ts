@@ -5,23 +5,32 @@
 // landing on the home page or opening the app used to kick off a warmup
 // that could still be mid-flight when someone tapped into a section,
 // which is exactly the "opens a half-loaded page and bugs out" complaint
-// users reported. Now the first tap on a gated link is what triggers
-// warmupActive() (all three kinds fetch together - that's efficient and
-// still gives every tile its own live progress via the kind field on
-// CATALOG_WARMING_BYTES_EVENT), and navigation only happens once it
-// resolves. A second tap on any gated link while a download is already
-// in flight just waits for that same one to finish.
+// users reported. Now the first tap on a gated link fetches ONLY that
+// tile's own kind (ensureLive/ensureVod/ensureSeries, not the bundled
+// warmupActive() that pulls all three together) - tapping Live TV on a
+// provider with a huge VOD/series catalog must not sit waiting on movies
+// and series data nobody asked for yet. Each still reports real-time
+// progress via the kind field on CATALOG_WARMING_BYTES_EVENT (the ensure*
+// functions dispatch it directly, warmupActive() was only a wrapper
+// around the same three calls). Navigation happens once the tapped
+// kind's fetch resolves; a second tap on any gated link while one is
+// already in flight just waits for that same one to finish - it does
+// NOT queue a second kind, since the two rarely take the same time and
+// stacking them reintroduces the same "waiting on data I didn't ask for"
+// problem this rewrite exists to avoid.
 //
 // Sidebar.astro and index.astro both bind their own gated links against
 // this module - the in-flight state below is shared across both (same
 // module instance) so a tap in one place is reflected in the other.
 
 import {
-  warmupActive,
+  ensureLive,
+  ensureVod,
+  ensureSeries,
   CATALOG_WARMING_BYTES_EVENT,
 } from "@/scripts/lib/catalog.js"
 import { getCached } from "@/scripts/lib/cache.js"
-import { getActiveEntry } from "@/scripts/lib/creds.js"
+import { getActiveEntry, loadCreds } from "@/scripts/lib/creds.js"
 
 export type CatalogKind = "live" | "vod" | "series"
 
@@ -43,9 +52,13 @@ export interface GateHandlers {
   onDone?: () => void
   /** A gated link was tapped while a download was already in flight. */
   onBlocked?: () => void
+  /** getActiveEntry()/warmupActive() itself threw - the tile is unstuck
+   *  (onDone still fires) but navigation did not happen. */
+  onError?: (err: unknown) => void
 }
 
 let inFlight: Promise<unknown> | null = null
+let inFlightKind: CatalogKind | null = null
 // Set synchronously the instant a download is decided on, before the first
 // `await` - closes the race where two gated tiles are tapped back-to-back
 // and both reach startOrJoinDownload() while `inFlight` is still null (it
@@ -61,6 +74,12 @@ function isKindWarm(playlistId: string, kind: CatalogKind): boolean {
     return !!getCached(playlistId, "live") || !!getCached(playlistId, "m3u")
   }
   return !!getCached(playlistId, kind)
+}
+
+function fetchKind(creds: unknown, playlistId: string, kind: CatalogKind) {
+  if (kind === "live") return ensureLive(creds, playlistId)
+  if (kind === "vod") return ensureVod(creds, playlistId)
+  return ensureSeries(creds, playlistId)
 }
 
 function notify<K extends keyof GateHandlers>(
@@ -91,23 +110,36 @@ function ensureBytesListener() {
   })
 }
 
-async function startOrJoinDownload(href: string) {
+async function startOrJoinDownload(href: string, kind: CatalogKind) {
   if (inFlight || starting) {
-    pendingHref = href
+    // Only the tile whose fetch is actually running gets to move the
+    // navigation target - a tap on a *different* kind while one is in
+    // flight would otherwise navigate to unfetched data once the first
+    // one resolves. Just let it know a download is already running.
+    if (kind === inFlightKind) pendingHref = href
     notify("onBlocked")
     return
   }
   starting = true
   ensureBytesListener()
   pendingHref = href
+  inFlightKind = kind
   notify("onStart")
   try {
     const active = await getActiveEntry()
-    inFlight = active ? warmupActive(active._id) : Promise.resolve(null)
+    if (active) {
+      const creds = await loadCreds()
+      inFlight = creds?.host ? fetchKind(creds, active._id, kind) : Promise.resolve(null)
+    } else {
+      inFlight = Promise.resolve(null)
+    }
     starting = false
     await inFlight
+  } catch (err) {
+    notify("onError", err)
   } finally {
     inFlight = null
+    inFlightKind = null
     starting = false
   }
   notify("onDone")
@@ -131,7 +163,7 @@ export function bindGatedLinks(root: ParentNode, handlers: GateHandlers = {}): v
       if (!kind) return
       ev.preventDefault()
       if (inFlight || starting) {
-        startOrJoinDownload(href)
+        startOrJoinDownload(href, kind)
         return
       }
       getActiveEntry().then((active) => {
@@ -139,7 +171,7 @@ export function bindGatedLinks(root: ParentNode, handlers: GateHandlers = {}): v
           window.location.href = href
           return
         }
-        startOrJoinDownload(href)
+        startOrJoinDownload(href, kind)
       })
     })
   })

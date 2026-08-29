@@ -508,28 +508,6 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
     bindGatedLinks(root, gatedHandlers)
   })
 
-  function onLoginPage() {
-    return (
-      location.pathname === "/login" ||
-      location.pathname.startsWith("/login/")
-    )
-  }
-  function maybeWarmup() {
-    if (onLoginPage()) return
-    import("@/scripts/lib/catalog.js")
-      .then((m) => m.warmupActive())
-      .catch(() => {})
-  }
-  document.addEventListener("xt:active-changed", () => {
-    maybeWarmup()
-  })
-
-  if (typeof window !== "undefined") {
-    window.requestIdleCallback
-      ? window.requestIdleCallback(maybeWarmup, { timeout: 2000 })
-      : setTimeout(maybeWarmup, 500)
-  }
-
   const sidebarBadge = document.getElementById("sidebar-downloads-badge")
   const sidebarSub = document.getElementById("sidebar-downloads-sub")
   const mobileBadge = document.getElementById("mobile-more-downloads-badge")

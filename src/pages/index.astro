@@ -63,10 +63,10 @@ import {
 				href="/livetv"
 				aria-label="Watch Live TV" data-i18n-attr="aria-label:aria.watchLiveTv"
 				style="animation-delay: 50ms;"
-				class="tile-enter group relative flex flex-col justify-between
+				class="tile-enter tile-smarters group relative flex flex-col items-center justify-center text-center gap-3
 					rounded-2xl border border-line bg-surface
-					p-6 sm:p-7
-					min-h-48 overflow-hidden
+					px-6 py-8 sm:py-10
+					min-h-56 overflow-hidden
 					transition-[transform,border-color,background-color] duration-300 ease-out
 					hover:border-accent hover:bg-surface-2
 					focus-visible:bg-surface-2
@@ -79,43 +79,37 @@ import {
 				<div id="livetv-tile-progress" class="tile-progress" aria-hidden="true" hidden>
 					<span class="tile-progress__fill"></span>
 				</div>
-				<div class="relative flex items-start justify-between gap-4 z-10">
-					<IconDeviceTv
-						aria-hidden="true"
-						stroke={1}
-						class="size-12 sm:size-14 text-fg-3 shrink-0 transition-colors duration-200 group-hover:text-accent group-focus-visible:text-accent"
-					/>
-					<p
-						id="hero-eyebrow"
-						class="font-sans text-eyebrow font-medium uppercase text-fg-3 text-right pt-2 tabular-nums"
-						aria-hidden="true">
-					</p>
-				</div>
-				<div class="relative mt-auto pt-6 z-10">
-					<h2
-						data-i18n="nav.livetv"
-						class="text-4xl sm:text-5xl font-semibold tracking-[-0.02em] leading-[0.95]
-							text-fg group-hover:text-accent group-focus-visible:text-accent
-							transition-colors duration-200 ms-[-0.05em]">
-						Live TV
-					</h2>
-					<p
-						id="livetv-tile-sub"
-						data-i18n="hub.tile.livetv.sub"
-						class="mt-2 text-sm text-fg-2 max-w-md font-sans tracking-tight truncate">
-						Channels, and what's on right now.
-					</p>
-				</div>
+				<p
+					id="hero-eyebrow"
+					class="relative z-10 font-sans text-eyebrow font-medium uppercase text-fg-3 tabular-nums"
+					aria-hidden="true">
+				</p>
+				<span class="tile-smarters__badge relative z-10">
+					<IconDeviceTv aria-hidden="true" stroke={1.5} class="size-9 sm:size-10" />
+				</span>
+				<h2
+					data-i18n="nav.livetv"
+					class="relative z-10 text-2xl sm:text-3xl font-bold tracking-[-0.01em] leading-tight
+						text-fg group-hover:text-accent group-focus-visible:text-accent
+						transition-colors duration-200">
+					Live TV
+				</h2>
+				<p
+					id="livetv-tile-sub"
+					data-i18n="hub.tile.livetv.sub"
+					class="relative z-10 text-sm text-fg-2 max-w-md font-sans tracking-tight truncate">
+					Channels, and what's on right now.
+				</p>
 			</a>
 
 			<a
 				href="/movies"
 				aria-label="Browse Movies" data-i18n-attr="aria-label:aria.browseMovies"
 				style="animation-delay: 150ms;"
-				class="tile-enter group relative overflow-hidden flex flex-col justify-between
+				class="tile-enter tile-smarters group relative overflow-hidden flex flex-col items-center justify-center text-center gap-3
 					rounded-2xl border border-line bg-surface
-					p-6 sm:p-7
-					min-h-48
+					px-6 py-8 sm:py-10
+					min-h-56
 					transition-[transform,border-color,background-color] duration-300 ease-out
 					hover:border-accent hover:bg-surface-2
 					focus-visible:bg-surface-2
@@ -128,31 +122,27 @@ import {
 				<div id="movies-tile-progress" class="tile-progress" aria-hidden="true" hidden>
 					<span class="tile-progress__fill"></span>
 				</div>
-				<IconMovie
-					aria-hidden="true"
-					stroke={1.25}
-					class="relative z-10 size-12 sm:size-14 text-fg-3 transition-colors duration-200 group-hover:text-accent group-focus-visible:text-accent"
-				/>
-				<div class="relative z-10 mt-auto pt-6">
-					<h2 data-i18n="nav.movies" class="text-4xl sm:text-5xl font-semibold tracking-[-0.02em] leading-[0.95]
-						text-fg group-hover:text-accent group-focus-visible:text-accent
-						transition-colors duration-200 ms-[-0.05em]">
-						Movies
-					</h2>
-					<p id="movies-tile-sub" data-i18n="hub.tile.movies.sub" class="mt-2 text-sm text-fg-2">
-						Browse the library.
-					</p>
-				</div>
+				<span class="tile-smarters__badge relative z-10">
+					<IconMovie aria-hidden="true" stroke={1.5} class="size-9 sm:size-10" />
+				</span>
+				<h2 data-i18n="nav.movies" class="relative z-10 text-2xl sm:text-3xl font-bold tracking-[-0.01em] leading-tight
+					text-fg group-hover:text-accent group-focus-visible:text-accent
+					transition-colors duration-200">
+					Movies
+				</h2>
+				<p id="movies-tile-sub" data-i18n="hub.tile.movies.sub" class="relative z-10 text-sm text-fg-2">
+					Browse the library.
+				</p>
 			</a>
 
 			<a
 				href="/series"
 				aria-label="Browse Series" data-i18n-attr="aria-label:aria.browseSeries"
 				style="animation-delay: 250ms;"
-				class="tile-enter group relative overflow-hidden flex flex-col justify-between
+				class="tile-enter tile-smarters group relative overflow-hidden flex flex-col items-center justify-center text-center gap-3
 					rounded-2xl border border-line bg-surface
-					p-6 sm:p-7
-					min-h-48
+					px-6 py-8 sm:py-10
+					min-h-56
 					transition-[transform,border-color,background-color] duration-300 ease-out
 					hover:border-accent hover:bg-surface-2
 					focus-visible:bg-surface-2
@@ -165,21 +155,17 @@ import {
 				<div id="series-tile-progress" class="tile-progress" aria-hidden="true" hidden>
 					<span class="tile-progress__fill"></span>
 				</div>
-				<IconStack2
-					aria-hidden="true"
-					stroke={1.25}
-					class="relative z-10 size-12 sm:size-14 text-fg-3 transition-colors duration-200 group-hover:text-accent group-focus-visible:text-accent"
-				/>
-				<div class="relative z-10 mt-auto pt-6">
-					<h2 data-i18n="nav.series" class="text-4xl sm:text-5xl font-semibold tracking-[-0.02em] leading-[0.95]
-						text-fg group-hover:text-accent group-focus-visible:text-accent
-						transition-colors duration-200 ms-[-0.05em]">
-						Series
-					</h2>
-					<p id="series-tile-sub" data-i18n="hub.tile.series.sub" class="mt-2 text-sm text-fg-2">
-						Shows and full seasons.
-					</p>
-				</div>
+				<span class="tile-smarters__badge relative z-10">
+					<IconStack2 aria-hidden="true" stroke={1.5} class="size-9 sm:size-10" />
+				</span>
+				<h2 data-i18n="nav.series" class="relative z-10 text-2xl sm:text-3xl font-bold tracking-[-0.01em] leading-tight
+					text-fg group-hover:text-accent group-focus-visible:text-accent
+					transition-colors duration-200">
+					Series
+				</h2>
+				<p id="series-tile-sub" data-i18n="hub.tile.series.sub" class="relative z-10 text-sm text-fg-2">
+					Shows and full seasons.
+				</p>
 			</a>
 		</nav>
 
@@ -266,9 +252,28 @@ import {
 		display: flex;
 	}
 
-	/* Tap-to-download state (see catalog-gate.ts): the tapped tile - and its
-	   two siblings, since warmupActive() fetches all three kinds together -
-	   show a thin fill bar at their base while the first sync is in flight.
+	/* Icon-in-a-badge treatment for the primary tiles, matching the layout
+	   of the reference IPTV-Smarters-style screen (centered icon, bold
+	   label below) while staying entirely within this app's own accent
+	   color instead of Smarters' multicolor gradients. */
+	.tile-smarters__badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 4.5rem;
+		height: 4.5rem;
+		border-radius: 9999px;
+		background: var(--color-accent-soft);
+		color: var(--color-accent);
+		transition: transform 200ms ease-out;
+	}
+	.tile-smarters:hover .tile-smarters__badge,
+	.tile-smarters:focus-visible .tile-smarters__badge {
+		transform: scale(1.06);
+	}
+
+	/* Tap-to-download state (see catalog-gate.ts): the tapped tile shows a
+	   thin fill bar at its base while its own catalog kind is downloading.
 	   Clicks stay live (not pointer-events:none) so a tap on a downloading
 	   tile can still explain why with a toast instead of doing nothing. */
 	#hub-tiles a.tile--downloading {
