@@ -19,6 +19,13 @@ import PlaylistSwitcher from "@/components/PlaylistSwitcher.svelte"
 
 const path = Astro.url.pathname.replace(/\/$/, "") || "/"
 
+// The three destinations that only fetch on tap (see catalog-gate.ts) get a
+// live percentage badge on their icon everywhere they're reachable from,
+// not just the home hub's own tiles - Live TV/Movies/Series navigated to
+// from this rail (or the mobile tab row) previously only dimmed with no
+// number, which read as "did anything happen?" during a real download.
+const GATED_HREF_KIND: Record<string, string> = { "/livetv": "live", "/movies": "vod", "/series": "series" }
+
 const items = [
   { href: "/",                key: "nav.home",          label: "Home",            Icon: IconHome,         match: (p) => p === "/" },
   { href: "/livetv",          key: "nav.livetv",        label: "Live TV",         Icon: IconDeviceTv,     match: (p) => p === "/livetv" || p.startsWith("/livetv/") },
@@ -194,6 +201,16 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
                        inline-flex items-center justify-center rounded-full
                        bg-accent text-bg text-[10px] font-semibold leading-none
                        tabular-nums ring-2 ring-bg">0</span>
+            )}
+            {GATED_HREF_KIND[href] && (
+              <span
+                data-gated-pct={GATED_HREF_KIND[href]}
+                aria-hidden="true"
+                hidden
+                class="absolute -top-1.5 -right-2 min-w-4.5 h-4.5 px-1
+                       inline-flex items-center justify-center rounded-full
+                       bg-accent text-bg text-[10px] font-semibold leading-none
+                       tabular-nums ring-2 ring-bg">0%</span>
             )}
           </span>
           <span data-i18n={key} class="rail-reveal hidden rail-expanded:inline truncate text-sm font-medium">
@@ -378,14 +395,26 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
             "focus-visible:bg-surface-2 active:scale-[0.96]",
             active ? "text-fg" : "text-fg-3 hover:text-fg",
           ]}>
-          <Icon
-            aria-hidden="true"
-            stroke={active ? 2 : 1.75}
-            class:list={[
-              "size-5 shrink-0",
-              active ? "text-accent" : "text-fg-3",
-            ]}
-          />
+          <span class="relative inline-flex shrink-0">
+            <Icon
+              aria-hidden="true"
+              stroke={active ? 2 : 1.75}
+              class:list={[
+                "size-5 shrink-0",
+                active ? "text-accent" : "text-fg-3",
+              ]}
+            />
+            {GATED_HREF_KIND[href] && (
+              <span
+                data-gated-pct={GATED_HREF_KIND[href]}
+                aria-hidden="true"
+                hidden
+                class="absolute -top-1.5 -right-2.5 min-w-4 h-4 px-0.5
+                       inline-flex items-center justify-center rounded-full
+                       bg-accent text-bg text-[9px] font-semibold leading-none
+                       tabular-nums ring-2 ring-bg">0%</span>
+            )}
+          </span>
           <span data-i18n={key} class:list={[
             "text-2xs leading-none truncate max-w-full",
             active ? "font-medium" : "font-normal",
@@ -453,14 +482,26 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
             "focus-visible:bg-surface-2 active:scale-[0.96]",
             active ? "text-fg" : "text-fg-3 hover:text-fg",
           ]}>
-          <Icon
-            aria-hidden="true"
-            stroke={active ? 2 : 1.75}
-            class:list={[
-              "size-5 shrink-0",
-              active ? "text-accent" : "text-fg-3",
-            ]}
-          />
+          <span class="relative inline-flex shrink-0">
+            <Icon
+              aria-hidden="true"
+              stroke={active ? 2 : 1.75}
+              class:list={[
+                "size-5 shrink-0",
+                active ? "text-accent" : "text-fg-3",
+              ]}
+            />
+            {GATED_HREF_KIND[href] && (
+              <span
+                data-gated-pct={GATED_HREF_KIND[href]}
+                aria-hidden="true"
+                hidden
+                class="absolute -top-1.5 -right-2.5 min-w-4 h-4 px-0.5
+                       inline-flex items-center justify-center rounded-full
+                       bg-accent text-bg text-[9px] font-semibold leading-none
+                       tabular-nums ring-2 ring-bg">0%</span>
+            )}
+          </span>
           <span data-i18n={key} class:list={[
             "text-2xs leading-none truncate max-w-full",
             active ? "font-medium" : "font-normal",
@@ -494,15 +535,33 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   // Tap-to-download (see catalog-gate.ts): Live TV/Movies/Series don't fetch
   // anything until tapped, and each fetches independently now - only the
   // row whose kind is actually downloading dims, the other two stay live.
-  // The percentage readout lives on the home hub's own tiles (index.astro)
-  // where there's room for it; here it's just a dim + toast. A download
-  // triggered from *either* the rail or the hub tiles is reflected here
-  // too, since both bind against the same shared module.
+  // A live percentage badge sits on that row's icon here too (not just the
+  // home hub's own tiles) - a dim with no number read as "did anything
+  // happen?" when the download was actually triggered from this rail/tab
+  // row rather than the hub. A download triggered from *either* is
+  // reflected in both, since they bind against the same shared module.
   const KIND_HREF = { live: "/livetv", vod: "/movies", series: "/series" }
   function setGatedDownloading(kind, downloading) {
     document.querySelectorAll(`a[href="${KIND_HREF[kind]}"]`).forEach((a) => {
       a.setAttribute("aria-disabled", downloading ? "true" : "false")
       a.classList.toggle("nav-link--gated", downloading)
+    })
+    if (!downloading) {
+      document.querySelectorAll(`[data-gated-pct="${kind}"]`).forEach((badge) => {
+        badge.hidden = true
+      })
+    }
+  }
+  function setGatedPct(kind, pct) {
+    document.querySelectorAll(`[data-gated-pct="${kind}"]`).forEach((badge) => {
+      if (pct == null) {
+        // No known total (e.g. an M3U source with no Content-Length) - keep
+        // the row dimmed but don't show a misleading stuck percentage.
+        badge.hidden = true
+        return
+      }
+      badge.hidden = false
+      badge.textContent = `${pct}%`
     })
   }
 
@@ -511,6 +570,7 @@ const settingsActive = path === "/settings" || path.startsWith("/settings/")
   // the same <a> twice would double-fire the click handler.
   const gatedHandlers = {
     onStart: (kind) => setGatedDownloading(kind, true),
+    onProgress: (kind, pct) => setGatedPct(kind, pct),
     onDone: (kind) => setGatedDownloading(kind, false),
     onBlocked: () => toastWarn(t("nav.stillLoading")),
   }
