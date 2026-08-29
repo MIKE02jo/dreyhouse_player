@@ -2,7 +2,6 @@
 import Layout from "@/layouts/Layout.astro";
 import HubStrips from "@/components/HubStrips.svelte";
 import WelcomeCard from "@/components/WelcomeCard.astro";
-import PlaylistSwitcher from "@/components/PlaylistSwitcher.svelte";
 import {
 	IconDeviceTv,
 	IconMovie,
@@ -55,9 +54,20 @@ import {
 			<WelcomeCard />
 		</section>
 
-		<div id="hub-account-switcher" class="relative z-30 shrink-0 flex justify-center sm:justify-start">
-			<PlaylistSwitcher client:load />
-		</div>
+		<a
+			id="hub-account-switcher"
+			href="/settings#settings-playlists"
+			aria-label="Switch account"
+			data-i18n-attr="aria-label:playlist.switch"
+			class="shrink-0 self-center sm:self-start inline-flex items-center gap-2.5 px-2.5 py-2.5 min-h-11 max-w-full
+				rounded-xl border border-line bg-surface text-sm font-medium text-fg
+				transition-colors hover:bg-surface-2 focus-visible:bg-surface-2 focus-visible:border-accent
+				outline-none">
+			<span
+				id="hub-account-badge"
+				class="h-5 min-w-5 px-1.5 inline-flex items-center justify-center rounded-md font-semibold text-fg-2 shrink-0 ring-1 ring-line text-label uppercase"></span>
+			<span id="hub-account-title" class="truncate tracking-tight text-fg-3"></span>
+		</a>
 
 		<nav
 			id="hub-tiles"
@@ -438,13 +448,37 @@ import {
 		const entries = await getEntries();
 		const hasEntries = entries.length > 0;
 		document.documentElement.toggleAttribute("data-first-run", !hasEntries);
-		// Just the grid on this screen once a playlist is loaded - the mobile
-		// bottom tab bar would only duplicate Live TV/Movies/Series that are
-		// already right there as tiles. It's back as soon as you navigate
-		// into any of those (Layout.astro renders it per-page, this toggle
-		// only ever touches this one page's own instance of it).
-		document.querySelector("[data-mobile-nav]")?.toggleAttribute("hidden", hasEntries);
+		await syncAccountSwitcher(entries);
 		return hasEntries;
+	}
+
+	// Its own page (Settings' Playlists section already lists, selects,
+	// edits and removes every account) rather than a dropdown here - this
+	// is just the "who's active + tap to switch" entry point, matching how
+	// every other destination on this hub is a link to a full page and
+	// nothing opens inline on top of it.
+	async function syncAccountSwitcher(entriesArg) {
+		const entries = entriesArg || (await getEntries());
+		const switcherEl = document.getElementById("hub-account-switcher");
+		const badgeEl = document.getElementById("hub-account-badge");
+		const titleEl = document.getElementById("hub-account-title");
+		if (!switcherEl || !badgeEl || !titleEl) return;
+		if (!entries.length) {
+			switcherEl.hidden = true;
+			return;
+		}
+		switcherEl.hidden = false;
+		const active = await getActiveEntry();
+		if (!active) {
+			badgeEl.textContent = "-";
+			titleEl.textContent = t("playlist.none");
+			return;
+		}
+		const emoji = typeof active.emoji === "string" ? active.emoji.trim() : "";
+		badgeEl.textContent = emoji || (active.type === "xtream" ? "XT" : "M3U");
+		titleEl.textContent = active.title || "";
+		titleEl.classList.toggle("text-fg", true);
+		titleEl.classList.toggle("text-fg-3", false);
 	}
 
 	// A customer only sees the "Activate with a code" screen once, then
