@@ -1,7 +1,7 @@
 {
   "productName": "DREYHOUSE PLAYER",
   "mainBinaryName": "dreyhouse-player",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "identifier": "com.dreyhouse.player",
   "build": {
     "frontendDist": "../dist",
